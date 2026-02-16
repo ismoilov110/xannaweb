@@ -17,10 +17,24 @@ import Motivation from "./Pages/Motivation/Motivation";
 
 import LogIn from "./Pages/Auth/LogIn";
 import Register from "./Pages/Auth/Register";
-// import SubscriptionGuard from "./Routes/SubscriptionGuard";
-// import PaymentPage from "./Pages/Subscription/PaymentPage";
+import SubscriptionGuard from "./Routes/SubscriptionGuard";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getMeThunk } from "./features/User/User.thunks";
+import type { RootState } from "./Store";
 
 export default function App() {
+  const dispatch = useDispatch();
+  const { isAuth } = useSelector((state: RootState) => state.auth);
+
+  // Dastur yuklanganda, agar foydalanuvchi tizimga kirgan bo'lsa,
+  // uning profil ma'lumotlarini (obuna holatini ham) yuklaymiz
+  useEffect(() => {
+    if (isAuth) {
+      dispatch(getMeThunk() as any);
+    }
+  }, [isAuth, dispatch]);
+
   return (
     <Routes>
       {/* PUBLIC / GUEST */}
@@ -35,9 +49,9 @@ export default function App() {
         <Route path="/obuna-success" element={<PaymentPage />} />
         <Route
           element={
-            // <SubscriptionGuard>
-            // </SubscriptionGuard>
+            <SubscriptionGuard>
               <MainLayout />
+            </SubscriptionGuard>
           }
         >
           <Route path="/home" element={<Home />} />
