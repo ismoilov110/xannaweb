@@ -1,10 +1,6 @@
-// import { useSelector } from "react-redux";
-// import type { RootState } from "@/Store";
 import SubscriptionCard from "@/components/Subscribe/SubscriptionCard";
 import type { RootState } from "@/Store";
 import { useSelector } from "react-redux";
-// import { Navigate } from "react-router-dom";
-// import { Navigate } from "react-router-dom";
 
 interface SubscriptionGuardProps {
     children: React.ReactNode;
@@ -12,26 +8,36 @@ interface SubscriptionGuardProps {
 
 export default function SubscriptionGuard({ children }: SubscriptionGuardProps) {
     const { isAuth } = useSelector((state: RootState) => state.auth);
-    // TODO: Connect to real user profile 'isPremium' or similar field
-    // For MVP/Demo: we can use a mock or local storage flag if backend isn't ready
-    // const { userData } = useSelector((state: RootState) => state.profile);
-    const isPremium = false; // Mock: Force false to test blocking behavior
+    // Redux store'dan foydalanuvchi ma'lumotlarini olamiz
+    const { userData, isLoading } = useSelector((state: RootState) => state.profile);
 
-    //  if (children) return <>{children}</>;
-    // if (!isAuth) {
-    //     return <Navigate to="/login" replace />;
-    // }
+    // Foydalanuvchi obuna bo'lganmi yoki yo'qligini tekshiramiz
+    const isPremium = userData.isPremium;
 
-    if (!isPremium) {
+    // Agar ma'lumotlar yuklanayotgan bo'lsa, loading ko'rsatamiz
+    if (isLoading) {
         return (
             <div className="fixed inset-0 z-50 bg-[#FDECEF] flex items-center justify-center p-4">
-                <div className="w-full max-w-md">
-                    <SubscriptionCard />
-                    {/* Note: SubscriptionCard needs to be self-contained or have a prop to handle "Purchase" */}
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 border-4 border-[#F98CA1] border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-[#9A7F85] font-medium">Ma'lumotlar yuklanmoqda...</p>
                 </div>
             </div>
         );
     }
 
+    // Agar foydalanuvchi avtorizatsiyadan o'tgan bo'lsa-yu, lekin obunasi bo'lmasa
+    // unga obuna bo'lish sahifasini (overlay ko'rinishida) ko'rsatamiz
+    if (isAuth && !isPremium) {
+        return (
+            <div className="fixed inset-0 z-50 bg-[#FDECEF] flex items-center justify-center p-4 overflow-y-auto">
+                <div className="w-full max-w-md my-8">
+                    <SubscriptionCard />
+                </div>
+            </div>
+        );
+    }
+
+    // Agar obuna bo'lsa, sahifani odatdagidek ko'rsatamiz
     return <>{children}</>;
 }

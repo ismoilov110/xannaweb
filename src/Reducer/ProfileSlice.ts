@@ -13,6 +13,7 @@ interface ProfileState {
   userData: UserProfile;
   editData: UserProfile;
   isEditOpen: boolean;
+  isLoading: boolean; // Ma'lumotlar yuklanayotganini tekshirish uchun
 }
 
 const initialState: ProfileState = {
@@ -20,17 +21,18 @@ const initialState: ProfileState = {
     name: "",
     number: "",
     avatar: "/vite.svg",
-    isPremium: true,
+    isPremium: false, // Default: obuna bo'lmagan (falsy)
     memberSince: "",
   },
   editData: {
     name: "",
     number: "",
     avatar: "/vite.svg",
-    isPremium: true,
+    isPremium: false,
     memberSince: "",
   },
   isEditOpen: false,
+  isLoading: false,
 };
 
 export const profileSlice = createSlice({
@@ -58,6 +60,9 @@ export const profileSlice = createSlice({
   },
 
   extraReducers: (builder) => {
+    builder.addCase(getMeThunk.pending, (state) => {
+      state.isLoading = true;
+    });
     builder.addCase(getMeThunk.fulfilled, (state, action) => {
       const user = action.payload;
 
@@ -68,7 +73,11 @@ export const profileSlice = createSlice({
         number: user.phone_number,
         memberSince: new Date(user.date_joined).toLocaleDateString(),
       };
-    })
+      state.isLoading = false;
+    });
+    builder.addCase(getMeThunk.rejected, (state) => {
+      state.isLoading = false;
+    });
   }
 });
 
