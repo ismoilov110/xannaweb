@@ -4,6 +4,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 interface UserProfile {
   name: string;
   number: string;
+  email: string;
   avatar: string;
   isPremium: boolean;
   memberSince: string;
@@ -20,6 +21,7 @@ const initialState: ProfileState = {
   userData: {
     name: "",
     number: "",
+    email: "",
     avatar: "/vite.svg",
     isPremium: false, // Default: obuna bo'lmagan (falsy)
     memberSince: "",
@@ -27,6 +29,7 @@ const initialState: ProfileState = {
   editData: {
     name: "",
     number: "",
+    email: "",
     avatar: "/vite.svg",
     isPremium: false,
     memberSince: "",
@@ -64,18 +67,34 @@ export const profileSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(getMeThunk.fulfilled, (state, action) => {
-      const user = action.payload;
+      // Backenddan kelgan ma'lumotni log qilamiz (debug uchun)
+      console.log("ME API RESPONSE:", action.payload);
 
-      state.userData = {
-        name: `${user.first_name} ${user.last_name}`,
-        avatar: user.profile_image ?? null,
-        isPremium: user.has_subscription ?? false,
-        number: user.phone_number,
-        memberSince: new Date(user.date_joined).toLocaleDateString(),
-      };
-      state.isLoading = false;
+      try {
+        // Ma'lumot action.payload.user ichida keladi
+        const user = action.payload?.user || {};
+
+        state.userData = {
+          name: user.full_name || (user.first_name || user.last_name
+            ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+            : "Foydalanuvchi"),
+          avatar: user.profile_image || "/vite.svg",
+          isPremium: !!(user.has_subscription || user.is_active_subscription),
+          number: user.phone_number || "",
+          email: user.email || "",
+          memberSince: user.date_joined
+            ? new Date(user.date_joined).toLocaleDateString()
+            : "Noma'lum",
+        };
+      } catch (err) {
+        console.error("ProfileSlice mapping error:", err);
+      } finally {
+        state.isLoading = false;
+        console.log("ProfileSlice: isLoading set to FALSE");
+      }
     });
-    builder.addCase(getMeThunk.rejected, (state) => {
+    builder.addCase(getMeThunk.rejected, (state, action) => {
+      console.error("getMeThunk REJECTED:", action.error);
       state.isLoading = false;
     });
   }
