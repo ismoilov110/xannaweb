@@ -20,7 +20,6 @@ export const RegisterThunk = createAsyncThunk(
         const res = await registerService(data);
         localStorage.setItem("access_token", res.data.access);
         localStorage.setItem("refresh_token", res.data.refresh);
-        console.log("REGISTER RESPONSE =>", res.data);
         await dispatch(logInThunk({ phone_number: data.phone_number, password: data.password1 }));
     },
 )

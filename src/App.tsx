@@ -18,22 +18,41 @@ import Motivation from "./Pages/Motivation/Motivation";
 import LogIn from "./Pages/Auth/LogIn";
 import Register from "./Pages/Auth/Register";
 import SubscriptionGuard from "./Routes/SubscriptionGuard";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getMeThunk } from "./features/User/User.thunks";
 import type { RootState } from "./Store";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function App() {
   const dispatch = useDispatch();
   const { isAuth } = useSelector((state: RootState) => state.auth);
+  const { isLoading } = useSelector((state: RootState) => state.profile);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const hasFetched = useRef(false);
 
-  // Dastur yuklanganda, agar foydalanuvchi tizimga kirgan bo'lsa,
-  // uning profil ma'lumotlarini (obuna holatini ham) yuklaymiz
+  // Dastur yuklanganda foydalanuvchi ma'lumotlarini yuklaymiz
   useEffect(() => {
-    if (isAuth) {
+    if (isAuth && !hasFetched.current) {
+      console.log("App.tsx: Fetching profile data...");
       dispatch(getMeThunk() as any);
+      hasFetched.current = true;
     }
   }, [isAuth, dispatch]);
+
+  // To'lovdan qaytgandagi URL parametrlarini tekshirish va tozalash
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("payment_status") || params.get("token")) {
+      console.log("App.tsx: Payment return detected, clearing params...");
+      // Agar to'lovdan qaytgan bo'lsa, ma'lumotlarni qayta yuklash kerak bo'lishi mumkin
+      if (isAuth) {
+        dispatch(getMeThunk() as any);
+      }
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.search, isAuth, dispatch, navigate, location.pathname]);
 
   return (
     <Routes>

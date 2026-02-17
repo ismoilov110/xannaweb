@@ -6,8 +6,7 @@ import { Mail, Sparkles, CalendarHeart } from "lucide-react";
 import ProfileHeader from "./ProfileHeader";
 import ProfileInfoCard from "./ProfileInfoCard";
 import ProfileActions from "./ProfileActions";
-import { useEffect } from "react";
-import { getMeThunk } from "@/features/User/User.thunks";
+import { cn } from "@/lib/utils";
 
 
 export default function Profile() {
@@ -29,10 +28,6 @@ export default function Profile() {
         window.location.href = "/";
     };
 
-    useEffect(() => {
-        dispatch(getMeThunk() as any);
-
-    }, [dispatch])
 
     return (
         <div className="bg-[#FFF6F8] min-h-screen flex justify-center py-10 px-4">
@@ -47,16 +42,25 @@ export default function Profile() {
                 <div className="flex flex-col gap-2">
                     <ProfileInfoCard
                         icon={<Mail className="w-6 h-6" />}
-                        label="Number"
-                        value={userData.number} // This field is missing in the slice, hardcoded for now or should be added to slice
+                        label="Email"
+                        value={userData.email || "Email kiritilmagan"}
+                    />
+
+                    <ProfileInfoCard
+                        icon={<Mail className="w-6 h-6" />}
+                        label="Telefon raqam"
+                        value={userData.number || "Raqam kiritilmagan"}
                     />
 
                     <ProfileInfoCard
                         icon={<Sparkles className="w-6 h-6" />}
                         label="Obuna holati"
-                        value={userData.isPremium}
+                        value={userData.isPremium ? "Faol" : "Faol emas"} // Boolean qiymatni matnga aylantiramiz
                         rightElement={
-                            <div className="w-3 h-3 rounded-full bg-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]"></div>
+                            <div className={cn(
+                                "w-3 h-3 rounded-full shadow-lg",
+                                userData.isPremium ? "bg-green-400 shadow-green-200" : "bg-red-400 shadow-red-200"
+                            )}></div>
                         }
                     />
 
