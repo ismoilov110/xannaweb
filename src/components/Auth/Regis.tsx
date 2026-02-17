@@ -170,6 +170,7 @@ export default function Regis() {
             label="Telefon raqam"
             error={errors.phoneNumber?.message}
           />
+          {errors.phoneNumber && <p className="text-xs text-red-500 mt-1">{errors.phoneNumber.message}</p>}
 
           {/* 
           <div>

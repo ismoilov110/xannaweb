@@ -5,7 +5,8 @@ import  { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function ChatCategory() {
-  const { category } = useParams<{ category: string }>();
+  const { categoryId } = useParams<{ categoryId: string }>();
+  const cid = Number(categoryId)
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -43,12 +44,12 @@ export default function ChatCategory() {
   };
 
   const currentCategory =
-    Chatcategories[category || "cooking"] || Chatcategories.cooking;
+    Chatcategories[categoryId || "cooking"] || Chatcategories.cooking;
 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: currentCategory.greeting,
+      text: currentCategory.greeting, 
       isUser: false,
       timestamp: new Date(),
     },
