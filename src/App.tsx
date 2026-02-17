@@ -27,7 +27,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 export default function App() {
   const dispatch = useDispatch();
   const { isAuth } = useSelector((state: RootState) => state.auth);
-  const { isLoading } = useSelector((state: RootState) => state.profile);
   const location = useLocation();
   const navigate = useNavigate();
   const hasFetched = useRef(false);
