@@ -78,7 +78,7 @@ export default function App() {
           <Route path="/kontentlar" element={<Contack />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/chat" element={<Chat />} />
-          <Route path="/chat/:category" element={<ChatCategory />} />
+          <Route path="/chat/:categoryId" element={<ChatCategory />} />
           <Route path="/profilepage" element={<ProfilePage />} />
           <Route path="/motivation" element={<Motivation />} />
         </Route>
