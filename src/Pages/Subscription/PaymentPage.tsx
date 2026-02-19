@@ -129,8 +129,8 @@ export default function PaymentPage() {
             onClick={() => openPayment(click?.url)}
             className="w-full group relative flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] hover:border-[#23A8F0] hover:bg-[#F0F9FF] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#23A8F0] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+            <div className="flex cursor-pointer items-center gap-4">
+              <div className="w-12 h-12  bg-[#23A8F0] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
                 CL
               </div>
               <div className="text-left">
@@ -152,8 +152,8 @@ export default function PaymentPage() {
             onClick={() => openPayment(payme?.url)}
             className="w-full group relative flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] hover:border-[#00CCCC] hover:bg-[#E6FFFA] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#00CCCC] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
+            <div className="flex cursor-pointer items-center gap-4">
+              <div className="w-12  h-12 bg-[#00CCCC] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
                 PM
               </div>
               <div className="text-left">

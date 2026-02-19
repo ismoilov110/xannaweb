@@ -104,7 +104,7 @@ export default function VideoCarousel() {
           absolute inset-0 w-full h-full
           object-contain md:object-cover
           md:object-[50%_38%]
-          will-change-transform
+          will-change-transform bg-top
         "
       />
 
