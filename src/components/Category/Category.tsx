@@ -19,7 +19,7 @@ export default function Category() {
                     {
                         CategroyDatas.map((category, index) => (
                             <Link key={category.id}
-                                to={`/chat/:category${category.id}`}
+                                to={`/chat/${category.id}`}
                                 className="group relative rounded-2xl border p-6 border-white/20 bg-white backdrop-blur-xl shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl overflow-hidden"
                                 style={{ animationDelay: `${index * 0.1}s` }}
                             >
