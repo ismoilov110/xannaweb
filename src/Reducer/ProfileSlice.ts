@@ -1,13 +1,14 @@
-import { getMeThunk } from "@/features/User/User.thunks";
+import { getMeThunk, updateProfileThunk, updateUserImageThunk } from "@/features/User/User.thunks";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface UserProfile {
   name: string;
   number: string;
-  email: string;
+  birth_date: string;
   avatar: string;
   isPremium: boolean;
   memberSince: string;
+  expired_at: string;
 }
 
 interface ProfileState {
@@ -21,21 +22,29 @@ const initialState: ProfileState = {
   userData: {
     name: "",
     number: "",
-    email: "",
-    avatar: "/vite.svg",
-    isPremium: false, // Default: obuna bo'lmagan (falsy)
+    birth_date: "",
+    avatar: "", // Default avatar bo'sh bo'lishi kerak, Fallback ishlashi uchun
+    isPremium: false,
     memberSince: "",
+    expired_at: "",
   },
   editData: {
     name: "",
     number: "",
-    email: "",
-    avatar: "/vite.svg",
+    birth_date: "",
+    avatar: "",
     isPremium: false,
     memberSince: "",
+    expired_at: "",
   },
   isEditOpen: false,
   isLoading: false,
+};
+
+const formatAvatarUrl = (url: string | null | undefined) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  return `https://xannaofficial.uz${url.startsWith("/") ? "" : "/"}${url}`;
 };
 
 export const profileSlice = createSlice({
@@ -54,7 +63,7 @@ export const profileSlice = createSlice({
       state.editData = { ...state.editData, ...action.payload };
     },
     updateAvatar(state, action: PayloadAction<string>) {
-      state.userData.avatar = action.payload;
+      state.userData.avatar = formatAvatarUrl(action.payload);
     },
     saveProfile(state) {
       state.userData = state.editData;
@@ -78,13 +87,16 @@ export const profileSlice = createSlice({
           name: user.full_name || (user.first_name || user.last_name
             ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
             : "Foydalanuvchi"),
-          avatar: user.profile_image || "/vite.svg",
+          avatar: formatAvatarUrl(user.profile_image),
           isPremium: !!(user.has_subscription || user.is_active_subscription),
           number: user.phone_number || "",
-          email: user.email || "",
+          birth_date: user.birth_date || "Kiritilmagan",
           memberSince: user.date_joined
             ? new Date(user.date_joined).toLocaleDateString()
             : "Noma'lum",
+          expired_at: user.subscription_expired_at
+            ? new Date(user.subscription_expired_at).toLocaleDateString()
+            : "Amal qilish muddati yo'q",
         };
       } catch (err) {
         console.error("ProfileSlice mapping error:", err);
@@ -95,6 +107,44 @@ export const profileSlice = createSlice({
     });
     builder.addCase(getMeThunk.rejected, (state, action) => {
       console.error("getMeThunk REJECTED:", action.error);
+      state.isLoading = false;
+    });
+
+    // Avatar yuklash jarayoni
+    builder.addCase(updateUserImageThunk.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(updateUserImageThunk.fulfilled, (state, action) => {
+      // Backenddan yangi avatar URL kelishi kerak
+      console.log("UPDATE IMAGE RESPONSE:", action.payload);
+      const newAvatar = action.payload?.user?.profile_image || action.payload?.profile_image || action.payload?.image;
+      if (newAvatar) {
+        state.userData.avatar = formatAvatarUrl(newAvatar);
+      }
+      state.isLoading = false;
+    });
+    builder.addCase(updateUserImageThunk.rejected, (state, action) => {
+      console.error("updateUserImageThunk REJECTED:", action.error);
+      state.isLoading = false;
+    });
+
+    // Profil ma'lumotlarini yangilash
+    builder.addCase(updateProfileThunk.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(updateProfileThunk.fulfilled, (state, action) => {
+      console.log("UPDATE PROFILE RESPONSE:", action.payload);
+      const user = action.payload?.user || action.payload || {};
+      state.userData = {
+        ...state.userData,
+        name: user.full_name || state.userData.name,
+        birth_date: user.birth_date || state.userData.birth_date,
+      };
+      state.isLoading = false;
+      state.isEditOpen = false;
+    });
+    builder.addCase(updateProfileThunk.rejected, (state, action) => {
+      console.error("updateProfileThunk REJECTED:", action.error);
       state.isLoading = false;
     });
   }

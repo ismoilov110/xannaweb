@@ -3,8 +3,8 @@
 export const NavLink = [
     {
         id: 0,
-        title: "bosh sahifa",
-        href: "/"
+        title: "Bosh sahifa",
+        href: "/home"
     },
     {
         id: 1,
