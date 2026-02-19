@@ -56,7 +56,7 @@ export default function AvatarDropdown() {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={toggleDropdown}
-                className="relative h-10 w-10 rounded-full focus:outline-none transition-transform active:scale-95"
+                className="relative cursor-pointer h-10 w-10 rounded-full focus:outline-none transition-transform active:scale-95"
             >
                 <Avatar className="h-10 w-10 border border-[#F3D3DA]">
                     <AvatarImage src={userData?.avatar} alt={userData?.name || "User"} className="object-cover" />

@@ -7,7 +7,7 @@ import { Lock, Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useDispatch } from "react-redux"
 import { logInThunk } from "@/features/Auth/Auth.thunks"
-import { formatPhoneNumber } from "@/utils/phone"
+import { cleanPhoneNumber } from "@/utils/phone"
 import PhoneInputComponent from "../ui/PhoneInput"
 import SuccessOverlay from "../ui/SuccessOverlay"
 
@@ -29,7 +29,7 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormValues) => {
     const payload = {
-      phone_number: formatPhoneNumber(data.PhoneNumber),
+      phone_number: cleanPhoneNumber(data.PhoneNumber),
       password: data.password1.trim(),
     }
 

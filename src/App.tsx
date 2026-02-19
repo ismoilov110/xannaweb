@@ -18,6 +18,7 @@ import Motivation from "./Pages/Motivation/Motivation";
 import LogIn from "./Pages/Auth/LogIn";
 import Register from "./Pages/Auth/Register";
 import SubscriptionGuard from "./Routes/SubscriptionGuard";
+import GuestGuard from "./Routes/GuestGuard";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getMeThunk } from "./features/User/User.thunks";
@@ -56,11 +57,13 @@ export default function App() {
   return (
     <Routes>
       {/* PUBLIC / GUEST */}
-      <Route element={<MainLayout />}>
-        <Route path="/" element={<GuestHome />} />
+      <Route element={<GuestGuard />}>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<GuestHome />} />
+        </Route>
+        <Route path="/login" element={<LogIn />} />
+        <Route path="/register" element={<Register />} />
       </Route>
-      <Route path="/login" element={<LogIn />} />
-      <Route path="/register" element={<Register />} />
 
       {/* PROTECTED */}
       <Route element={<ProtectedRoute />}>

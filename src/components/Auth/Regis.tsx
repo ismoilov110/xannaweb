@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux"
 import { RegisterThunk } from "@/features/Auth/Auth.thunks"
 import PhoneInputComponent from "../ui/PhoneInput"
 import SuccessOverlay from "../ui/SuccessOverlay"
+import { cleanPhoneNumber } from "@/utils/phone"
 
 export default function Regis() {
   const dispatch = useDispatch()
@@ -82,7 +83,7 @@ export default function Regis() {
   const onSubmit = async (data: RegisterFormValues) => {
     // backenga jonatiladigan data va bu datani backend kutadi
     const payload = {
-      phone_number: data.phoneNumber.replace(/\s/g, ""),
+      phone_number: cleanPhoneNumber(data.phoneNumber),
       first_name: data.name,
       last_name: data.surname,
       password1: data.password1,
