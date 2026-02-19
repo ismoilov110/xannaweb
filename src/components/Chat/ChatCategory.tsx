@@ -1,14 +1,17 @@
 import { styles } from "@/Styles/Styles";
 import { type CategoriesType, type Message } from "@/Types/Types";
 import { ArrowLeft, BookOpen, ChefHat, Heart, Lightbulb, MapPin, Send } from "lucide-react";
-import  { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { startChat, sendMassege } from "@/Services/AiChat/AiChat.services";
+import { tr } from "zod/v4/locales";
 
 export default function ChatCategory() {
   const { categoryId } = useParams<{ categoryId: string }>();
   const cid = Number(categoryId)
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [conversationId, setConversationId] = useState<number | null>(null)
 
   const Chatcategories: CategoriesType = {
     cooking: {
@@ -49,7 +52,7 @@ export default function ChatCategory() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: currentCategory.greeting, 
+      text: currentCategory.greeting,
       isUser: false,
       timestamp: new Date(),
     },
@@ -62,35 +65,97 @@ export default function ChatCategory() {
 
   // Auto scroll to bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (!cid || Number.isNaN(cid)) return; // bu yerda categoryId ni tekshiramiz
 
-  const handleSend = () => {
-    if (!inputValue.trim()) return;
+    // Chatni boshlash va conversationId ni olish
+    (async () => {
+      try {
+        const data = await startChat(cid);
+        setConversationId(data.conversation ? data.conversation.id : null); // Backend'dan conversation ob'ekti va uning ichida id kelmoqda.
 
-    const userMessage: Message = {
-      id: Date.now(),
-      text: inputValue,
+        // Agar backend old massages ni yuborsa, ularni chatgan qo'shamiz, bu odatda chatni boshlashda bitta xabardan iborat bo'ladi, u ham backend tomonidan yaratilgan va foydalanuvchiga salomlashish uchun ishlatiladi.
+        if (data.messages?.length) {
+          setMessages(
+            data.messages.map((m, index) => ({
+              id: Date.now() + index,
+              text: m.content,
+              isUser: m.role === "user",
+              timestamp: new Date(m.created_at || m.timestamp || "")
+            })))
+        }
+      } catch (e: any) {
+        const status = e?.response?.status;
+        const redirect = e?.response?.data?.redirect;
+
+        // Agar status 403 bo'lsa va backend redirect URL yuborsa, biz foydalanuvchini o'sha URL ga yo'naltiramiz, bu odatda login sahifasi bo'ladi.
+        if (status === 403 && redirect) {
+          navigate(redirect)
+          return;
+        }
+        if (status === 401) {
+          navigate("/login")
+          return;
+        }
+        console.error(e)
+      }
+    })()
+  }, [cid, navigate])
+
+  const handleSend = async () => {
+    const text = inputValue.trim(); // inputdagi bosh joylarni olib tashlaymiz
+    if (!text) return; // agar input bosh bolsa, hech narsa yubormaymiz
+    if (!conversationId) {
+      console.error("Conversation ID olinmagan, xabar yuborilmayapti.");
+      return;
+    } // agar conversationId hali olinmagan bolsa,xabar yubormaymiz.
+
+    // foydalanuchi xabarini chatga qoshamiz
+    const UserMessage: Message = {
+      id: Date.now(), // 
+      text,
       isUser: true,
-      timestamp: new Date(),
-    };
+      timestamp: new Date()
+    }
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInputValue("");
-    setIsTyping(true);
+    setMessages((prev) => [...prev, UserMessage]);
+    setInputValue(""); // inputni tozalaymiz
+    setIsTyping(true); // AI javob yozayotganini korsatamiz
 
-    // Simulate AI response
-    setTimeout(() => {
-      const botMessage: Message = {
+    try {
+      const res = await sendMassege(cid, conversationId, text); // bu yerda biz backendga categoryId, conversationId va xabar matni bilan so'rov yuboramiz va AI javobini olamiz
+
+      const AiMessage: Message = {
         id: Date.now() + 1,
-        text: "Ajoyib savol! Men hozir javob tayyorlayapman 🙂",
+        text: res.assistant_message.content,
         isUser: false,
-        timestamp: new Date(),
+        timestamp: new Date(res.assistant_message.created_at)
       };
-      setMessages((prev) => [...prev, botMessage]);
-      setIsTyping(false);
-    }, 1500);
-  };
+
+      setMessages((prev) => [...prev, AiMessage]); // AI javbini chatga qoshamiz
+    } catch (e: any) {
+      const status = e?.response?.status;
+      const redirect = e?.response?.status;
+
+      if (status === 403 && redirect) {
+        navigate(redirect);
+        return
+      }
+      if (status === 401) {
+        navigate("/login");
+        return
+      }
+
+      console.error(e);
+      setMessages((prev) => [...prev, {
+        id: Date.now() + 1,
+        text: "Kechirasiz, xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.",
+        isUser: false,
+        timestamp: new Date()
+      }]);
+    } finally {
+      setIsTyping(false) // AI javob yozishni tugatdik, typing indikatorini o'chiramiz
+    }
+  }
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("uz-UZ", {
@@ -108,7 +173,7 @@ export default function ChatCategory() {
             {/* Back Button */}
             <button
               onClick={() => navigate(-1)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 cursor-pointer rounded-full transition-colors"
             >
               <ArrowLeft size={24} className="text-gray-700" />
             </button>
@@ -145,11 +210,10 @@ export default function ChatCategory() {
                 className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[75%] ${
-                    message.isUser
-                      ? "bg-gradient-to-r from-pink-500 to-rose-400 text-white"
-                      : "bg-white border border-gray-200 text-gray-800"
-                  } rounded-2xl px-4 py-3 shadow-sm`}
+                  className={`max-w-[75%] ${message.isUser
+                    ? "bg-gradient-to-r from-pink-500 to-rose-400 text-white"
+                    : "bg-white border border-gray-200 text-gray-800"
+                    } rounded-2xl px-4 py-3 shadow-sm`}
                 >
                   {!message.isUser && (
                     <div
@@ -166,11 +230,10 @@ export default function ChatCategory() {
                     {message.text}
                   </p>
                   <span
-                    className={`text-xs mt-1 block ${
-                      message.isUser
-                        ? "text-pink-100"
-                        : "text-gray-400"
-                    }`}
+                    className={`text-xs mt-1 block ${message.isUser
+                      ? "text-pink-100"
+                      : "text-gray-400"
+                      }`}
                   >
                     {formatTime(message.timestamp)}
                   </span>
@@ -205,7 +268,13 @@ export default function ChatCategory() {
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleSend()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault(),
+                      handleSend()
+                  }
+                }}
+
                 placeholder="Xabar yozing..."
                 className="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-400"
               />
