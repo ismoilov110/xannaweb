@@ -1,4 +1,4 @@
-import { LogOut, Edit3 } from "lucide-react";
+import { LogOut, Edit3, Calendar } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -16,8 +16,9 @@ import {
     openEdit,
     closeEdit,
     updateEdits,
-    saveProfile,
 } from "@/Reducer/ProfileSlice";
+import { updateProfileThunk } from "@/features/User/User.thunks";
+import type { AppDispatch } from "@/Store";
 import { cn } from "@/lib/utils";
 
 interface ProfileActionsProps {
@@ -25,11 +26,18 @@ interface ProfileActionsProps {
 }
 
 export default function ProfileActions({ onLogout }: ProfileActionsProps) {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
-    const { editData, isEditOpen } = useSelector(
+    const { editData, isEditOpen, isLoading } = useSelector(
         (state: RootState) => state.profile
     );
+
+    const handleSave = () => {
+        dispatch(updateProfileThunk({
+            full_name: editData.name,
+            birth_date: editData.birth_date
+        }));
+    };
 
     return (
         <div className="mt-8 flex flex-col items-center gap-6">
@@ -75,16 +83,35 @@ export default function ProfileActions({ onLogout }: ProfileActionsProps) {
                             />
                         </div>
 
-                        {/* Phone */}
+                        {/* Phone - Read Only */}
                         <div className="space-y-2">
-                            <Label className={cn("text-[#3A2B2F]")}>Telefon raqam</Label>
+                            <Label className={cn("text-[#3A2B2F]")}>Telefon raqam (O'zgartirib bo'lmaydi)</Label>
                             <Input
                                 value={editData.number}
-                                onChange={(e) =>
-                                    dispatch(updateEdits({ number: e.target.value }))
-                                }
-                                className="h-12 rounded-2xl bg-[#F7A1B5]/50  border border-[#F3D3DA]/50"
+                                readOnly
+                                className="h-12 rounded-2xl bg-[#F7A1B5]/20 border border-[#F3D3DA]/50 cursor-not-allowed opacity-70"
                             />
+                        </div>
+
+                        {/* Birth Date */}
+                        <div className="space-y-2">
+                            <Label className={cn("text-[#3A2B2F] font-medium")}>Tug'ilgan sana</Label>
+                            <div className="relative group">
+                                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-[#8C6F76] group-focus-within:text-[#F28BA8] transition-colors pointer-events-none" />
+                                <Input
+                                    type="date"
+                                    value={editData.birth_date}
+                                    onChange={(e) =>
+                                        dispatch(updateEdits({ birth_date: e.target.value }))
+                                    }
+                                    className={cn(
+                                        "h-12 pl-12 pr-4 rounded-2xl bg-[#F9E0E6] border border-[#F3D3DA]/50",
+                                        "focus:bg-white focus:border-[#F28BA8] focus:ring-2 focus:ring-[#F28BA8]/20",
+                                        "transition-all duration-200 cursor-pointer appearance-none",
+                                        "[&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:inset-0 [&::-webkit-calendar-picker-indicator]:w-full [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                                    )}
+                                />
+                            </div>
                         </div>
 
                         <div className="flex pt-2 items-center gap-3">
@@ -93,9 +120,10 @@ export default function ProfileActions({ onLogout }: ProfileActionsProps) {
                             </Button>
                             <Button
                                 className="flex-1 h-12 rounded-xl bg-[#F28BA8] hover:bg-[#F28BA8]/90 shadow-md cursor-pointer"
-                                onClick={() => dispatch(saveProfile())}
+                                onClick={handleSave}
+                                disabled={isLoading}
                             >
-                                Saqlash
+                                {isLoading ? "Saqlanmoqda..." : "Saqlash"}
                             </Button>
 
                         </div>
