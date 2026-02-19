@@ -34,16 +34,14 @@ export default function Profile() {
             <div className="w-full mt-25 max-w-md">
 
                 <ProfileHeader
-                    name={userData.name}
-                    avatar={userData.avatar || ""}
                     isPremium={userData.isPremium}
                 />
 
                 <div className="flex flex-col gap-2">
                     <ProfileInfoCard
-                        icon={<Mail className="w-6 h-6" />}
-                        label="Email"
-                        value={userData.email || "Email kiritilmagan"}
+                        icon={<Sparkles className="w-6 h-6" />}
+                        label="Tug'ilgan sana"
+                        value={userData.birth_date || "Kiritilmagan"}
                     />
 
                     <ProfileInfoCard
@@ -68,6 +66,12 @@ export default function Profile() {
                         icon={<CalendarHeart className="w-6 h-6" />}
                         label="A'zo bo'lgan vaqt"
                         value={userData.memberSince}
+                    />
+
+                    <ProfileInfoCard
+                        icon={<Sparkles className="w-6 h-6" />}
+                        label="Amal qilish muddati"
+                        value={userData.expired_at}
                     />
                 </div>
 
