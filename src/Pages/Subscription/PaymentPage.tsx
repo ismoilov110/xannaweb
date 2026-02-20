@@ -95,6 +95,7 @@ export default function PaymentPage() {
     const separator = fullUrl.includes("?") ? "&" : "?"; // bu yerda urlda allaqachon "?" bor-yo'qligini tekshiramiz, agar bo'lsa "&" qo'shamiz, bo'lmasa "?" qo'shamiz
 
     window.location.href = `${fullUrl}${separator}token=${encodeURIComponent(token)}`;
+    
   };
 
   return (

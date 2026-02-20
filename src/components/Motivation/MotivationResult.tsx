@@ -8,51 +8,82 @@ interface MotivationResultProps {
         vitamin: string;
         activity: string;
     };
+    date?: string;
 }
 
-const MotivationResult: React.FC<MotivationResultProps> = ({ imageSrc, advice }) => {
+const MotivationResult: React.FC<MotivationResultProps> = ({ imageSrc, advice, date }) => {
     return (
-        <div className="w-full max-w-2xl mx-auto mt-8 flex flex-col md:flex-row gap-6 items-start md:items-center animate-fade-in-up">
-            {/* Avatar Image */}
-            <div className="relative shrink-0 mx-auto md:mx-0">
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full p-1 bg-white shadow-lg border-2 border-[#F98CA1]/30">
-                    <img
-                        src={imageSrc}
-                        alt="User upload"
-                        className="w-full h-full rounded-full object-cover"
-                    />
-                </div>
-                <div className="absolute -bottom-2 -right-2 bg-white px-3 py-1 rounded-full shadow-md text-xs font-medium text-[#8B5E5E] border border-pink-100">
-                    Siz ✨
-                </div>
-            </div>
+        <div className="w-full max-w-2xl mx-auto flex flex-col gap-6 animate-fade-in-up">
+            {/* Today's Highlight */}
+            <div className="bg-white/40 backdrop-blur-xl p-6 md:p-8 rounded-[2rem] border border-white/60 shadow-xl shadow-pink-200/20">
+                <div className="flex flex-col md:flex-row gap-8 items-center md:items-start text-center md:text-left">
+                    {/* User Image */}
+                    <div className="relative shrink-0">
+                        <div className="w-32 h-32 md:w-40 md:h-40 rounded-full p-1.5 bg-gradient-to-tr from-[#F98CA1] to-white shadow-lg">
+                            <img
+                                src={imageSrc}
+                                alt="Daily progress"
+                                className="w-full h-full rounded-full object-cover border-4 border-white"
+                            />
+                        </div>
+                        <div className="absolute -bottom-2 right-4 bg-[#F98CA1] text-white px-4 py-1 rounded-full text-xs font-bold shadow-md">
+                            {date || "Bugun"} ✨
+                        </div>
+                    </div>
 
-            {/* Speech Bubble / Card */}
-            <div className="relative flex-1 bg-white/80 backdrop-blur-md p-6 rounded-2xl rounded-tl-none md:rounded-tl-2xl md:rounded-l-none shadow-[0_4px_20px_-2px_rgba(249,140,161,0.15)] border border-[#FDECEF]">
-                <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                        <span className="text-xl shrink-0">💖</span>
-                        <p className="text-sm text-[#5D4E50] leading-relaxed">
-                            <span className="font-semibold text-[#8B5E5E]">Ko‘rinish:</span> {advice.appearance}
+                    {/* Quick Motivation */}
+                    <div className="flex-1">
+                        <h3 className="text-2xl font-serif text-[#8B5E5E] mb-3">AI Motivatsiya</h3>
+                        <p className="text-[#5D4E50] text-lg leading-relaxed italic">
+                            "{advice.appearance}"
                         </p>
                     </div>
-                    <div className="flex items-start gap-3">
-                        <span className="text-xl shrink-0">🌿</span>
-                        <p className="text-sm text-[#5D4E50] leading-relaxed">
-                            <span className="font-semibold text-[#8B5E5E]">Salomatlik:</span> {advice.health}
-                        </p>
+                </div>
+
+                {/* Detailed Advice Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                    {/* Health */}
+                    <div className="bg-white/60 p-4 rounded-2xl border border-white/50 flex items-start gap-4 hover:shadow-sm transition-all">
+                        <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center shrink-0 border border-green-100">
+                            <span className="text-xl">🌿</span>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-bold text-[#8B5E5E] uppercase tracking-wider mb-1">Salomatlik</h4>
+                            <p className="text-sm text-[#5D4E50]">{advice.health}</p>
+                        </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                        <span className="text-xl shrink-0">💊</span>
-                        <p className="text-sm text-[#5D4E50] leading-relaxed">
-                            <span className="font-semibold text-[#8B5E5E]">Vitamin:</span> {advice.vitamin}
-                        </p>
+
+                    {/* Vitamin */}
+                    <div className="bg-white/60 p-4 rounded-2xl border border-white/50 flex items-start gap-4 hover:shadow-sm transition-all">
+                        <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center shrink-0 border border-orange-100">
+                            <span className="text-xl">💊</span>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-bold text-[#8B5E5E] uppercase tracking-wider mb-1">Vitamin</h4>
+                            <p className="text-sm text-[#5D4E50]">{advice.vitamin}</p>
+                        </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                        <span className="text-xl shrink-0">🚶</span>
-                        <p className="text-sm text-[#5D4E50] leading-relaxed">
-                            <span className="font-semibold text-[#8B5E5E]">Faoliyat:</span> {advice.activity}
-                        </p>
+
+                    {/* Activity */}
+                    <div className="bg-white/60 p-4 rounded-2xl border border-white/50 flex items-start gap-4 hover:shadow-sm transition-all">
+                        <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100">
+                            <span className="text-xl">🚶</span>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-bold text-[#8B5E5E] uppercase tracking-wider mb-1">Faoliyat</h4>
+                            <p className="text-sm text-[#5D4E50]">{advice.activity}</p>
+                        </div>
+                    </div>
+
+                    {/* Advice / Tip */}
+                    <div className="bg-white/60 p-4 rounded-2xl border border-white/50 flex items-start gap-4 hover:shadow-sm transition-all">
+                        <div className="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center shrink-0 border border-pink-100">
+                            <span className="text-xl">❤️</span>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-bold text-[#8B5E5E] uppercase tracking-wider mb-1">Maslahat</h4>
+                            <p className="text-sm text-[#5D4E50]">O'zingizga vaqt ajratishni unutmang.</p>
+                        </div>
                     </div>
                 </div>
             </div>

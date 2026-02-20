@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import MotivationUploadCard from "./MotivationUploadCard";
 import MotivationResult from "./MotivationResult";
+import MotivationHistorySidebar from "./MotivationHistorySidebar";
 
 // Types
 interface Advice {
@@ -12,6 +13,7 @@ interface Advice {
 
 interface HistoryItem {
     date: string;
+    timestamp: number;
     image: string; // base64
     advice: Advice;
 }
@@ -19,22 +21,22 @@ interface HistoryItem {
 // Mock Advice Generator
 const MOCK_ADVICES: Advice[] = [
     {
-        appearance: "Bugun yuzingiz tiniq, lekin ko‘zlaringizda biroz charchoq bor.",
-        health: "Ko‘proq suv iching va ekran qarshisida kamroq o‘tiring.",
-        vitamin: "Vitamin C va Magniy (kechki payt)",
-        activity: "15 daqiqa toza havoda sayr qilish tavsiya etiladi."
+        appearance: "Ko‘zlariningiz porlab turibdi, bugun juda energiyaga to‘lasiz!",
+        health: "Iliq suv va limon bilan boshlangan tong sizga yanada kuch beradi.",
+        vitamin: "D3 vitamini (quyosh nuri yetishmasa)",
+        activity: "Yengil 20 daqiqalik gimnastika."
     },
     {
-        appearance: "Kayfiyatingiz a’lo, tabassumingiz ham buni tasdiqlayapti!",
-        health: "Immunitetni mustahkamlash uchun mevalar yeng.",
-        vitamin: "Vitamin D3 (ertalab)",
-        activity: "Yoga yoki yengil cho‘zish mashqlari."
+        appearance: "Yuzingizda tabassum — bu sizning eng chiroyli bezagingiz!",
+        health: "Yashil choy va quritilgan mevalar bilan tanovul qiling.",
+        vitamin: "Magniy B6 (tinchlanish uchun)",
+        activity: "Kechki payt 30 daqiqa sayr qilish."
     },
     {
-        appearance: "Kiyinish uslubingiz bugun juda yarashibdi.",
-        health: "Uyqu rejimini joyiga qo‘yishga harakat qiling.",
-        vitamin: "Omega-3 (tushlik payti)",
-        activity: "5000 qadam yurish."
+        appearance: "Bugun kiyinishingiz juda nafis, bu sizga bo‘lgan ishonchni oshiradi.",
+        health: "Meva va sabzavotlarga boy parhez sizni yanada tiniqlashtiradi.",
+        vitamin: "Omega-3 (sog‘lom soch va teri uchun)",
+        activity: "8000 qadam masofani bosib o‘tish."
     }
 ];
 
@@ -42,118 +44,116 @@ const getRandomAdvice = () => MOCK_ADVICES[Math.floor(Math.random() * MOCK_ADVIC
 
 const MotivationSection: React.FC = () => {
     const [history, setHistory] = useState<HistoryItem[]>([]);
-    const [todayItem, setTodayItem] = useState<HistoryItem | null>(null);
     const [loading, setLoading] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<HistoryItem | null>(null);
+    const [isTodayDone, setIsTodayDone] = useState(false);
 
-    useEffect(() => {
-        // Load from localStorage
-        const stored = localStorage.getItem("motivation_history");
-        if (stored) {
-            try {
-                const parsed: HistoryItem[] = JSON.parse(stored);
-                setHistory(parsed);
 
-                // Check for today's upload
-                const todayStr = new Date().toISOString().split("T")[0];
-                const today = parsed.find((item) => item.date === todayStr);
-                if (today) {
-                    setTodayItem(today);
-                }
-            } catch (e) {
-                console.error("Failed to parse history", e);
-            }
-        }
-    }, []);
 
     const handleUpload = (file: File) => {
+        if (isTodayDone) return;
         setLoading(true);
 
         const reader = new FileReader();
         reader.onloadend = () => {
             const base64 = reader.result as string;
 
-            // Simulate API delay
             setTimeout(() => {
                 const advice = getRandomAdvice();
-                const todayStr = new Date().toISOString().split("T")[0];
+                const now = new Date();
+                const dateStr = now.toLocaleDateString("uz-UZ", { day: 'numeric', month: 'long' });
 
                 const newItem: HistoryItem = {
-                    date: todayStr,
+                    date: dateStr,
+                    timestamp: Date.now(),
                     image: base64,
                     advice,
                 };
 
                 const newHistory = [newItem, ...history];
                 setHistory(newHistory);
-                setTodayItem(newItem);
+                setSelectedItem(newItem);
+                setIsTodayDone(true);
                 localStorage.setItem("motivation_history", JSON.stringify(newHistory));
                 setLoading(false);
-            }, 1500);
+            }, 2000);
         };
         reader.readAsDataURL(file);
     };
 
     return (
-        <section className="relative py-20 px-4 md:px-8 max-w-5xl mx-auto min-h-screen flex flex-col items-center">
-            {/* Title */}
-            <h2 className="text-3xl md:text-4xl font-serif text-[#8B5E5E] text-center mb-8 drop-shadow-sm">
-                ✨ Kunlik motivatsiya
-            </h2>
+        <section className="min-h-screen bg-linear-to-br from-[#FFF5F7] via-[#FFF0F2] to-[#FDE7EB] pb-20 px-4">
+            <div className="max-w-7xl mx-auto pt-10">
+                {/* Header */}
+                <header className="text-center mb-16 animate-fade-in">
+                    <h2 className="text-4xl md:text-5xl font-serif text-[#8B5E5E] mb-4">
+                        ✨ Kunlik Motivatsiya
+                    </h2>
+                    <p className="text-[#9A7F85] max-w-md mx-auto">
+                        Har kuni bir dona rasm yuklang va AI tomonidan taqdim etilgan maxsus maslahatlarni qabul qiling.
+                    </p>
+                </header>
 
-            {/* Main Action Area */}
-            <div className="w-full mb-12">
-                {!todayItem ? (
-                    <>
-                        <MotivationUploadCard onUpload={handleUpload} disabled={loading} />
-                        {loading && (
-                            <div className="mt-4 text-center text-[#F98CA1] animate-pulse">
-                                Rasm tahlil qilinmoqda... 🌸
+                <div className="flex flex-col md:flex-row gap-10 items-start">
+                    {/* Sidebar: History */}
+                    <MotivationHistorySidebar
+                        onSelect={(item: HistoryItem ) => setSelectedItem(item)}
+
+                        history={history}
+                        activeDate={selectedItem?.date || null}
+                    />
+
+                    {/* Main Content */}
+                    <main className="flex-1 w-full">
+                        {!isTodayDone && !selectedItem && (
+                            <div className="h-100 flex flex-col items-center justify-center bg-white/30 backdrop-blur-md rounded-[2.5rem] border border-white/50 shadow-inner">
+                                <MotivationUploadCard onUpload={handleUpload} disabled={loading} />
+                                {loading && (
+                                    <div className="mt-8 flex flex-col items-center gap-3">
+                                        <div className="w-12 h-12 border-4 border-[#F98CA1]/30 border-t-[#F98CA1] rounded-full animate-spin"></div>
+                                        <p className="text-[#F98CA1] font-medium animate-pulse text-sm">
+                                            Rasm tahlil qilinmoqda... 🌸
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         )}
-                    </>
-                ) : (
-                    <div className="text-center animate-fade-in">
-                        <MotivationUploadCard onUpload={() => { }} disabled={true} />
-                        <div className="mt-6">
-                            <p className="text-[#8B5E5E] bg-white/50 inline-block px-4 py-2 rounded-full border border-pink-100 shadow-sm">
-                                Bugun rasm yuklangan ✅ Ertaga yana yuklashingiz mumkin
-                            </p>
-                            <MotivationResult imageSrc={todayItem.image} advice={todayItem.advice} />
-                        </div>
-                    </div>
-                )}
-            </div>
 
-            {/* History Section - Carousel/Scroll style */}
-            <div className="w-full mt-10">
-                <h3 className="text-xl font-medium text-[#8B5E5E] mb-6 pl-2 border-l-4 border-[#F98CA1]">
-                    Motivatsiya tarixi
-                </h3>
+                        {selectedItem && (
+                            <div className="animate-fade-in space-y-8">
+                                <MotivationResult
+                                    imageSrc={selectedItem.image}
+                                    advice={selectedItem.advice}
+                                    date={selectedItem.date}
+                                />
 
-                {history.length === 0 ? (
-                    <p className="text-center text-gray-400 italic py-10 bg-white/30 rounded-xl border border-dashed border-gray-300">
-                        Hozircha tarix yo‘q. Bugungi rasmingizni yuklang!
-                    </p>
-                ) : (
-                    <div className="flex gap-4 overflow-x-auto pb-6 px-2 snap-x scrollbar-hide">
-                        {history.map((item, idx) => (
-                            <div
-                                key={idx}
-                                className="snap-center shrink-0 w-64 bg-white/70 backdrop-blur-sm p-3 rounded-2xl shadow-sm border border-white hover:shadow-md transition-all"
-                            >
-                                <div className="h-40 rounded-xl overflow-hidden mb-3 bg-gray-100">
-                                    <img src={item.image} alt={item.date} className="w-full h-full object-cover" />
-                                </div>
-                                <div className="text-xs text-[#9A7F85] font-medium mb-1">
-                                    📅 {item.date}
-                                </div>
-                                <p className="text-sm text-[#5D4E50] line-clamp-3 leading-snug">
-                                    {item.advice.appearance}
-                                </p>
+                                {isTodayDone && (
+                                    <div className="flex justify-center">
+                                        <div className="bg-white/50 backdrop-blur-sm px-6 py-3 rounded-full border border-pink-100 shadow-sm flex items-center gap-3">
+                                            <span className="text-pink-400">✅</span>
+                                            <p className="text-[#8B5E5E] text-sm font-medium">
+                                                Bugungi limit tugadi, ertaga yana yuklaysiz
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
-                        ))}
-                    </div>
-                )}
+                        )}
+
+                        {/* If viewing history but haven't uploaded today yet */}
+                        {!isTodayDone && selectedItem && (
+                            <div className="mt-12 p-8 bg-white/40 backdrop-blur-md rounded-3xl border border-white/60 text-center">
+                                <h4 className="text-[#8B5E5E] font-serif text-xl mb-4">Bugungi rasmingizni hali yuklamadingiz</h4>
+                                <button
+                                    onClick={() => setSelectedItem(null)}
+                                    className="bg-[#F98CA1] text-white px-8 py-3 rounded-full hover:bg-[#ff7b94] transition-all shadow-lg hover:scale-105"
+                                >
+                                    Hozir yuklash 📸
+                                </button>
+                            </div>
+                        )}
+                    </main>
+                </div>
             </div>
         </section>
     );

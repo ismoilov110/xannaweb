@@ -4,7 +4,6 @@ import { ArrowLeft, BookOpen, ChefHat, Heart, Lightbulb, MapPin, Send } from "lu
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { startChat, sendMassege } from "@/Services/AiChat/AiChat.services";
-import { tr } from "zod/v4/locales";
 
 export default function ChatCategory() {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -165,7 +164,7 @@ export default function ChatCategory() {
   };
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-pink-50 to-white flex flex-col">
+    <section className="min-h-screen bg-linear-to-b from-pink-50 to-white flex flex-col">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
         <div className={`${styles.container} py-4`}>
@@ -211,7 +210,7 @@ export default function ChatCategory() {
               >
                 <div
                   className={`max-w-[75%] ${message.isUser
-                    ? "bg-gradient-to-r from-pink-500 to-rose-400 text-white"
+                    ? "bg-linear-to-r from-pink-500 to-rose-400 text-white"
                     : "bg-white border border-gray-200 text-gray-800"
                     } rounded-2xl px-4 py-3 shadow-sm`}
                 >
