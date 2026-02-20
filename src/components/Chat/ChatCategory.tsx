@@ -51,7 +51,7 @@ export default function ChatCategory() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: currentCategory.greeting,
+      text: currentCategory.greeting, 
       isUser: false,
       timestamp: new Date(),
     },
