@@ -12,7 +12,7 @@ export default function GuestGuard() {
 
     // Agar foydalanuvchi tizimga kirgan bo'lsa (token bor va isAuth true), 
     // uni asosiy dashboardga (/home) yo'naltiramiz.
-    if (token && isAuth) {
+    if (token || isAuth) {
         return <Navigate to="/home" replace />;
     }
 

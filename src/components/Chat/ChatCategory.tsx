@@ -3,7 +3,7 @@ import { type CategoriesType, type Message } from "@/Types/Types";
 import { ArrowLeft, BookOpen, ChefHat, Heart, Lightbulb, MapPin, Send } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { startChat, sendMassege } from "@/Services/AiChat/AiChat.services";
+import { startChat, sendMessage } from "@/Services/AiChat/AiChat.services";
 
 export default function ChatCategory() {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -45,8 +45,16 @@ export default function ChatCategory() {
     },
   };
 
-  const currentCategory =
-    Chatcategories[categoryId || "cooking"] || Chatcategories.cooking;
+  const categoryMapping: Record<string, string> = {
+    "0": "cooking",
+    "1": "places",
+    "2": "lifehacks",
+    "3": "books",
+    "4": "selfcare"
+  };
+
+  const currentCategoryKey = categoryMapping[categoryId || "0"] || "cooking";
+  const currentCategory = Chatcategories[currentCategoryKey];
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -64,15 +72,14 @@ export default function ChatCategory() {
 
   // Auto scroll to bottom
   useEffect(() => {
-    if (!cid || Number.isNaN(cid)) return; // bu yerda categoryId ni tekshiramiz
+    if (!cid || Number.isNaN(cid)) return;
 
-    // Chatni boshlash va conversationId ni olish
     (async () => {
       try {
         const data = await startChat(cid);
-        setConversationId(data.conversation ? data.conversation.id : null); // Backend'dan conversation ob'ekti va uning ichida id kelmoqda.
-        // setConversationId()
-        // Agar backend old massages ni yuborsa, ularni chatgan qo'shamiz, bu odatda chatni boshlashda bitta xabardan iborat bo'ladi, u ham backend tomonidan yaratilgan va foydalanuvchiga salomlashish uchun ishlatiladi.
+        const newCid = data.conversation?.id || data.conversation_id || null;
+        setConversationId(newCid);
+
         if (data.messages?.length) {
           setMessages(
             data.messages.map((m, index) => ({
@@ -83,45 +90,33 @@ export default function ChatCategory() {
             })))
         }
       } catch (e: any) {
-        const status = e?.response?.status;
-        const redirect = e?.response?.data?.redirect;
-
-        // Agar status 403 bo'lsa va backend redirect URL yuborsa, biz foydalanuvchini o'sha URL ga yo'naltiramiz, bu odatda login sahifasi bo'ladi.
-        if (status === 403 && redirect) {
-          navigate(redirect)
-          return;
-        }
-        if (status === 401) {
-          navigate("/login")
-          return;
-        }
-        console.error(e)
+        console.error("startChat init error:", e);
       }
     })()
   }, [cid, navigate])
 
   const handleSend = async () => {
-    const text = inputValue.trim(); // inputdagi bosh joylarni olib tashlaymiz
-    if (!text) return; // agar input bosh bolsa, hech narsa yubormaymiz
-    if (!conversationId) {
-      console.error("Conversation ID olinmagan, xabar yuborilmayapti.");
-      return;
-    } // agar conversationId hali olinmagan bolsa,xabar yubormaymiz.
+    const text = inputValue.trim();
+    if (!text) return;
 
-    // foydalanuchi xabarini chatga qoshamiz
+    // Foydalanuvchi xabarini darhol ko'rsatamiz
     const UserMessage: Message = {
-      id: Date.now(), // 
+      id: Date.now(),
       text,
       isUser: true,
       timestamp: new Date()
     }
 
     setMessages((prev) => [...prev, UserMessage]);
-    setInputValue(""); // inputni tozalaymiz
-    setIsTyping(true); // AI javob yozayotganini korsatamiz
+    setInputValue("");
+    setIsTyping(true);
 
     try {
-      const res = await sendMassege(cid, conversationId, text); // bu yerda biz backendga categoryId, conversationId va xabar matni bilan so'rov yuboramiz va AI javobini olamiz
+      const res = await sendMessage(cid, conversationId, text);
+
+      if (!conversationId && res.conversation_id) {
+        setConversationId(res.conversation_id);
+      }
 
       const AiMessage: Message = {
         id: Date.now() + 1,
@@ -130,10 +125,10 @@ export default function ChatCategory() {
         timestamp: new Date(res.assistant_message.created_at)
       };
 
-      setMessages((prev) => [...prev, AiMessage]); // AI javbini chatga qoshamiz
+      setMessages((prev) => [...prev, AiMessage]);
     } catch (e: any) {
       const status = e?.response?.status;
-      const redirect = e?.response?.status;
+      const redirect = e?.response?.data?.redirect;
 
       if (status === 403 && redirect) {
         navigate(redirect);
@@ -152,7 +147,7 @@ export default function ChatCategory() {
         timestamp: new Date()
       }]);
     } finally {
-      setIsTyping(false) // AI javob yozishni tugatdik, typing indikatorini o'chiramiz
+      setIsTyping(false)
     }
   }
 
@@ -269,11 +264,10 @@ export default function ChatCategory() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    e.preventDefault(),
-                      handleSend()
+                    e.preventDefault();
+                    handleSend();
                   }
                 }}
-
                 placeholder="Xabar yozing..."
                 className="flex-1 bg-transparent outline-none text-gray-800 placeholder-gray-400"
               />

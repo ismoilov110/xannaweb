@@ -30,28 +30,45 @@ export async function getCategories() {
 
 // bu yerda biz backendga categoyId bilan so'rov yuboramiz va suhbatni boshlaymiz va chatga oid ma'lumotlarni olamiz
 export async function startChat(categoryId: number) {
-    const { data } = await api.post(`/api/ai/quick-chat/${categoryId}/`);
-    return data as {
-        success: boolean;
-        conversation: {
-            id: number;
-            [key: string]: any;
-        };
-        messages: ApiChatMessage[]
-    };
+    try {
+        // FormData ishlatish orqali application/json cheklovidan o'tamiz
+        const formData = new FormData();
+        // const { data } = await api.post(`/api/ai/quick-chat/${categoryId}/`, formData, {
+            // headers: {
+        //         "Content-Type": "multipart/form-data"
+        //     }
+        // });
+        // return data as {
+        //     success: boolean;
+        //     conversation?: {
+        //         id: number;
+        //         [key: string]: any;
+        //     };
+        //     conversation_id?: number;
+        //     messages?: ApiChatMessage[]
+        // };
+    } catch (error) {
+        console.error("startChat error:", error);
+        throw error;
+    }
 }
 
-export async function sendMassege(categoryId: number, conversationId: number, message: string) {
-    // Agar backend 'conversation_id' o'rniga 'id' kutyotgan bo'lsa, bu yerda tekshirish kerak.
-    // Hozirgi holatda metadata 'id' deb ko'rsatmoqda.
-    const { data } = await api.post(`/api/ai/quick-chat/${categoryId}/`, {
-        message,
-        conversation_id: conversationId // Agar xato davom etsa, buni 'id' ga almashtirib ko'rish mumkin
+export async function sendMessage(categoryId: number, conversationId: number | null, message: string) {
+    const formData = new FormData();
+    formData.append("message", message);
+    if (conversationId) {
+        formData.append("conversation_id", conversationId.toString());
+    }
+
+    const { data } = await api.post(`/api/ai/quick-chat/${categoryId}/`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
     });
     return data as {
         success: boolean;
-        conversation_id: number;    
+        conversation_id?: number;
         user_message: ApiChatMessage;
-        assistant_message: ApiChatMessage; // ai_response emas, assistant_message
+        assistant_message: ApiChatMessage;
     }
 };

@@ -1,32 +1,58 @@
-import { logInThunk } from "@/features/Auth/Auth.thunks";
-import {  createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { logInThunk, RegisterThunk } from "@/features/Auth/Auth.thunks";
 
-type AuthState = {
-    isAuth: boolean;
+interface AuthState {
+   isAuth: boolean;
+   status: "idle" | "loading" | "succeeded" | "failed";
+   error?: string;
 }
-
 
 const initialState: AuthState = {
-   isAuth: !!localStorage.getItem("access_token"), 
-}
+   isAuth: !!localStorage.getItem("access_token"),
+   status: "idle"
+};
+
+console.log("AuthSlice: isAuth initialized as:", initialState.isAuth, "tokens:", !!localStorage.getItem("access_token"));
+
 export const AuthSlice = createSlice({
-   name: "Auth",
+   name: "auth",
    initialState,
    reducers: {
-     logout(state) {
-        state.isAuth = false,
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-     },
+      logout(state) {
+         localStorage.removeItem("access_token");
+         localStorage.removeItem("refresh_token");
+         state.isAuth = false;
+         state.status = "idle";
+      },
    },
-
    extraReducers: (builder) => {
-      builder.addCase(logInThunk.fulfilled, (state) => {
-        state.isAuth = true
-      })
-   }
-})
+      builder
+         // Login
+         .addCase(logInThunk.pending, (state) => {
+            state.status = "loading";
+         })
+         .addCase(logInThunk.fulfilled, (state) => {
+            state.status = "succeeded";
+            state.isAuth = true;
+         })
+         .addCase(logInThunk.rejected, (state, action) => {
+            state.status = "failed";
+            state.error = action.payload as string;
+         })
+         // Register
+         .addCase(RegisterThunk.pending, (state) => {
+            state.status = "loading";
+         })
+         .addCase(RegisterThunk.fulfilled, (state) => {
+            state.status = "succeeded";
+            state.isAuth = true;
+         })
+         .addCase(RegisterThunk.rejected, (state, action) => {
+            state.status = "failed";
+            state.error = action.payload as string;
+         });
+   },
+});
 
-
-export const {logout} = AuthSlice.actions;
-export default AuthSlice.reducer
+export const { logout } = AuthSlice.actions;
+export default AuthSlice.reducer;

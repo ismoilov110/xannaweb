@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@/Store';
-import { logout } from '@/features/Auth/Auth.Slice';
+import { logout } from '@/Reducer/AuthSlice';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, LogOut } from 'lucide-react';
 import gsap from 'gsap';
