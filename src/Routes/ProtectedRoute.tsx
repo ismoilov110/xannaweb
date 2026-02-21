@@ -3,10 +3,11 @@ import { useSelector } from "react-redux";
 import type { RootState } from "@/Store";
 
 export default function ProtectedRoute() {
-  const isAuth = useSelector((state: RootState) => state.auth.isAuth);
   const token = localStorage.getItem("access_token");
 
-  if (!token || !isAuth) {
+  // Agar Reduxda isAuth false bo'lsa, lekin tokenda bor bo'lsa, 
+  // bu reload paytida bo'lishi mumkin. redundant isAuth check.
+  if (!token) {
     return <Navigate to="/register" replace />;
   }
 

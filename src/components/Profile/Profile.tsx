@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/Store";
 // import { openEdit } from "@/Reducer/ProfileSlice";
-import { logout } from "@/features/Auth/Auth.Slice";
+import { logout } from "@/Reducer/AuthSlice";
 import { Mail, Sparkles, CalendarHeart, Users2 } from "lucide-react";
 import ProfileHeader from "./ProfileHeader";
 import ProfileInfoCard from "./ProfileInfoCard";
