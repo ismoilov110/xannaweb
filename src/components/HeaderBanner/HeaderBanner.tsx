@@ -1,33 +1,54 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from "gsap";
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '@/Store';
+import { getDailyMotivationThunk } from '@/Reducer/MotivationSlice';
 
-// har kungi motivation gaplar 
-const motivationalMessages = [
-    "Bugun o'zingni tanla ✨",
-    "Bugun sen juda nafis ko'rinyapsan 💕",
-    "Bugun D vitaminini ichishni unutmang ☀️",
-    "Bugun o'zingga vaqt ajrat 🌸",
-    "Sen kuchli va go'zalsan 💪",
-    "Bugun yangi narsalar o'rgan 📚",
-];
 const HeaderBanner: React.FC = () => {
     const comp = useRef<HTMLDivElement>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const navigate = useNavigate()
+    const dispatch = useDispatch<AppDispatch>();
+
+    // Redux store'dan motivation gaplarini olamiz
+    const { messages, status } = useSelector((state: RootState) => state.motivation);
+    const { isAuth } = useSelector((state: RootState) => state.auth);
+
+    // Agar backenddan gaplar kelmagan bo'lsa, default gaplar
+    const defaultMessages = [
+        "Bugun o'zingni tanla ✨",
+        "Bugun sen juda nafis ko'rinyapsan 💕",
+        "Bugun D vitaminini ichishni unutmang ☀️",
+        "Bugun o'zingga vaqt ajrat 🌸",
+        "Sen kuchli va go'zalsan 💪",
+        "Bugun yangi narsalar o'rgan 📚",
+    ];
+
+    const displayMessages = messages.length > 0 ? messages : defaultMessages;
+
+    // Kunlik motivation gaplarni yuklash
+    useEffect(() => {
+        if (isAuth && status === 'idle') {
+            dispatch(getDailyMotivationThunk());
+        }
+    }, [dispatch, status, isAuth]);
 
     // bu massega almashib turishi uchun kod yozildi 
     useEffect(() => {
+        if (displayMessages.length === 0) return;
+
         const interval = setInterval(() => {
             setIsAnimating(true);
             setTimeout(() => {
-                setCurrentIndex((prev) => (prev + 1) % motivationalMessages.length);
+                setCurrentIndex((prev: number) => (prev + 1) % displayMessages.length);
                 setIsAnimating(false)
             }, 500)
-            return () => clearInterval(interval)
         }, 4000)
-    }, [])
+
+        return () => clearInterval(interval)
+    }, [displayMessages.length])
 
 
     useEffect(() => {
@@ -92,7 +113,7 @@ const HeaderBanner: React.FC = () => {
                 <p className={`text-2xl md:text-4xl font-serif text-[#3F2A2A] transition-all duration-500 ${isAnimating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}
 
                 >
-                    {motivationalMessages[currentIndex]}
+                    {displayMessages[currentIndex]}
                 </p>
             </div>
 

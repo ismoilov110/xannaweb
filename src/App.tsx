@@ -19,7 +19,7 @@ import LogIn from "./Pages/Auth/LogIn";
 import Register from "./Pages/Auth/Register";
 import SubscriptionGuard from "./Routes/SubscriptionGuard";
 import GuestGuard from "./Routes/GuestGuard";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getMeThunk } from "./features/User/User.thunks";
 import type { RootState } from "./Store";
@@ -30,20 +30,34 @@ export default function App() {
   const { isAuth } = useSelector((state: RootState) => state.auth);
   const location = useLocation();
   const navigate = useNavigate();
-  const hasFetched = useRef(false);
 
   // Dastur yuklanganda foydalanuvchi ma'lumotlarini yuklaymiz
   useEffect(() => {
-    if (isAuth && !hasFetched.current) {
-      console.log("App.tsx: Fetching profile data...");
+    // Agar foydalanuvchi isAuth bo'lsa va ism bo'sh bo'lsa (yoki har doim kirganda yangilash kerak bo'lsa)
+    if (isAuth) {
+      console.log("App.tsx: User is authenticated, fetching profile data...");
       dispatch(getMeThunk() as any);
-      hasFetched.current = true;
     }
   }, [isAuth, dispatch]);
 
   // To'lovdan qaytgandagi URL parametrlarini tekshirish va tozalash
   useEffect(() => {
     const params = new URLSearchParams(location.search);
+    const paymentStatus = params.get("payment_status");
+    const accessToken = params.get("access_token");
+    const refreshToken = params.get("refresh_token");
+
+    if (paymentStatus === "success" && accessToken && refreshToken) {
+      console.log("App.tsx: Payment success detected, saving tokens...");
+      localStorage.setItem("access_token", accessToken);
+      localStorage.setItem("refresh_token", refreshToken);
+
+      // Clean URL and reload to initialize Auth state
+      window.history.replaceState({}, '', '/');
+      window.location.reload();
+      return;
+    }
+
     if (params.get("payment_status") || params.get("token")) {
       console.log("App.tsx: Payment return detected, clearing params...");
       // Agar to'lovdan qaytgan bo'lsa, ma'lumotlarni qayta yuklash kerak bo'lishi mumkin
