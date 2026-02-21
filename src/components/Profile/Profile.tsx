@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/Store";
 // import { openEdit } from "@/Reducer/ProfileSlice";
 import { logout } from "@/features/Auth/Auth.Slice";
-import { Mail, Sparkles, CalendarHeart } from "lucide-react";
+import { Mail, Sparkles, CalendarHeart, Users2 } from "lucide-react";
 import ProfileHeader from "./ProfileHeader";
 import ProfileInfoCard from "./ProfileInfoCard";
 import ProfileActions from "./ProfileActions";
@@ -48,6 +48,12 @@ export default function Profile() {
                         icon={<Mail className="w-6 h-6" />}
                         label="Telefon raqam"
                         value={userData.number || "Raqam kiritilmagan"}
+                    />
+
+                    <ProfileInfoCard
+                        icon={<Users2 className="w-6 h-6" />}
+                        label="Jins"
+                        value={userData.gender === "male" ? "Erkak" : userData.gender === "female" ? "Ayol" : "Kiritilmagan"}
                     />
 
                     <ProfileInfoCard

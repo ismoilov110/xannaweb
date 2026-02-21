@@ -18,11 +18,12 @@ export const deleteUserImageThunk = createAsyncThunk("user/deleteImage", async (
   return res.data;
 });
 
-export const updateProfileThunk = createAsyncThunk("user/updateProfile", async (payload: { first_name?: string; last_name?: string; birth_date?: string }) => {
+export const updateProfileThunk = createAsyncThunk("user/updateProfile", async (payload: { first_name?: string; last_name?: string; birth_date?: string; gender?: string }) => {
   const formData = new FormData();
   if (payload.first_name) formData.append("first_name", payload.first_name);
   if (payload.last_name) formData.append("last_name", payload.last_name);
   if (payload.birth_date) formData.append("birth_date", payload.birth_date);
+  if (payload.gender) formData.append("gender", payload.gender);
 
   const res = await updateProfileService(formData);
   return res.data;
