@@ -34,7 +34,8 @@ export default function ProfileActions({ onLogout }: ProfileActionsProps) {
 
     const handleSave = () => {
         dispatch(updateProfileThunk({
-            full_name: editData.name,
+            first_name: editData.first_name,
+            last_name: editData.last_name,
             birth_date: editData.birth_date
         }));
     };
@@ -70,17 +71,30 @@ export default function ProfileActions({ onLogout }: ProfileActionsProps) {
                     </DialogHeader>
 
                     <div className="space-y-5 py-4">
-                        {/* Name */}
-                        <div className="space-y-2">
-                            <Label className={cn("text-[#3A2B2F]")}>To‘liq ism</Label>
-                            <Input
-                                value={editData.name}
-                                onChange={(e) =>
-                                    dispatch(updateEdits({ name: e.target.value }))
-                                }
-                                className="h-12 rounded-2xl bg-[#F7A1B5]/50  border border-[#F3D3DA]/50"
-
-                            />
+                        {/* Name Grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className={cn("text-[#3A2B2F]")}>Ism</Label>
+                                <Input
+                                    value={editData.first_name}
+                                    onChange={(e) =>
+                                        dispatch(updateEdits({ first_name: e.target.value }))
+                                    }
+                                    className="h-12 rounded-2xl bg-[#F7A1B5]/50  border border-[#F3D3DA]/50"
+                                    placeholder="Ism"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className={cn("text-[#3A2B2F]")}>Familiya</Label>
+                                <Input
+                                    value={editData.last_name}
+                                    onChange={(e) =>
+                                        dispatch(updateEdits({ last_name: e.target.value }))
+                                    }
+                                    className="h-12 rounded-2xl bg-[#F7A1B5]/50  border border-[#F3D3DA]/50"
+                                    placeholder="Familiya"
+                                />
+                            </div>
                         </div>
 
                         {/* Phone - Read Only */}
