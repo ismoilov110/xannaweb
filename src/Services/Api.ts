@@ -24,14 +24,43 @@ api.interceptors.request.use((config) => {
 // Response interceptor: 401 (Unauthorized) xatoliklarni ushlab olamiz
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            console.warn("Seans muddati tugagan yoki token xato. Tizimdan chiqilmoqda...");
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("refresh_token");
-            // Register'ga yo'naltiramiz, u yerdan login qilsa bo'ladi
-            window.location.href = "/register";
+    async (error) => {
+        const originalRequest = error.config;
+
+        // Agar xatolik 401 bo'lsa va bu qayta urinish bo'lmasa
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            const refreshToken = localStorage.getItem("refresh_token");
+
+            if (refreshToken) {
+                try {
+                    // Refresh token orqali yangi access token olish
+                    const response = await axios.post(`${api.defaults.baseURL}/token/refresh/`, {
+                        refresh: refreshToken
+                    });
+
+                    const newAccessToken = response.data.access;
+                    localStorage.setItem("access_token", newAccessToken);
+
+                    // Original requestni yangi token bilan qayta yuborish
+                    if (originalRequest.headers) {
+                        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                    }
+
+                    return api(originalRequest);
+                } catch (refreshError) {
+                    console.error("Refresh token xatosi:", refreshError);
+                    localStorage.removeItem("access_token");
+                    localStorage.removeItem("refresh_token");
+                    window.location.href = "/register";
+                    return Promise.reject(refreshError);
+                }
+            } else {
+                localStorage.removeItem("access_token");
+                window.location.href = "/register";
+            }
         }
+
         return Promise.reject(error);
     }
 );

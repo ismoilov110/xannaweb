@@ -22,7 +22,9 @@ export const registerService = async (payload: {
 };
 
 export const loginService = (payload: {
-    phone_number: string,
-    password: string
+  phone_number: string,
+  password: string
 }) => api.post("/login/", payload)
+
+export const refreshTokenService = (refresh: string) => api.post("/token/refresh/", { refresh })
 

@@ -2,7 +2,7 @@
 export default function ClickLogo() {
     return (
         <div>
-            <svg width="120" height="120" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <svg width="50" height="50" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <path d="M100 20
            C140 20 180 60 180 100
            C180 140 140 180 100 180

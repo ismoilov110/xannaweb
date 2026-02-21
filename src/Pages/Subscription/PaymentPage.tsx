@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowLeft, Check } from "lucide-react";
 import { api } from "@/Services/Api";
+import PaymeLogo from "@/components/Payme/PaymeLogo";
+import ClickLogo from "@/components/ClickLogo/ClickLogo";
 
 const BASE_URL = "https://xannaofficial.uz";
 const FALLBACK_TARIFF_ID = 1;
@@ -95,7 +97,7 @@ export default function PaymentPage() {
     const separator = fullUrl.includes("?") ? "&" : "?"; // bu yerda urlda allaqachon "?" bor-yo'qligini tekshiramiz, agar bo'lsa "&" qo'shamiz, bo'lmasa "?" qo'shamiz
 
     window.location.href = `${fullUrl}${separator}token=${encodeURIComponent(token)}`;
-    
+
   };
 
   return (
@@ -131,9 +133,7 @@ export default function PaymentPage() {
             className="w-full group relative flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] hover:border-[#23A8F0] hover:bg-[#F0F9FF] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <div className="flex cursor-pointer items-center gap-4">
-              <div className="w-12 h-12  bg-[#23A8F0] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
-                CL
-              </div>
+              <ClickLogo />
               <div className="text-left">
                 <h3 className="font-bold text-[#2E2E2E]">Click</h3>
                 <p className="text-xs text-[#9A7F85]">Click Evolution orqali</p>
@@ -154,9 +154,7 @@ export default function PaymentPage() {
             className="w-full group relative flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] hover:border-[#00CCCC] hover:bg-[#E6FFFA] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             <div className="flex cursor-pointer items-center gap-4">
-              <div className="w-12  h-12 bg-[#00CCCC] rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform">
-                PM
-              </div>
+              <PaymeLogo />
               <div className="text-left">
                 <h3 className="font-bold text-[#2E2E2E]">Payme</h3>
                 <p className="text-xs text-[#9A7F85]">Payme App orqali</p>
