@@ -29,6 +29,12 @@ api.interceptors.response.use(
 
         // Agar xatolik 401 bo'lsa va bu qayta urinish bo'lmasa
         if (error.response?.status === 401 && !originalRequest._retry) {
+
+            // Login yoki Register paytida 401 kelsa, redirect qilmaymiz (xato componentda chiqishi kerak)
+            if (originalRequest.url?.includes("/login/") || originalRequest.url?.includes("/register/")) {
+                return Promise.reject(error);
+            }
+
             originalRequest._retry = true;
             const refreshToken = localStorage.getItem("refresh_token");
 

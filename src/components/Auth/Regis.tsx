@@ -93,23 +93,39 @@ export default function Regis() {
 
     try {
       await dispatch(RegisterThunk(payload) as any).unwrap()
-
       setShowSuccess(true)
     } catch (err: any) {
-      const data = err?.response?.data
+      // unwrap() bilan rejectWithValue ishlatilganda err to'g'ridan-to'g'ri server response bo'ladi
+      const serverData = err?.response?.data || err?.data || err;
 
-      // DFR da xatoliklar ro'y bersa, ularni  formaga set qilish
-      if (data?.phone_number?.[0]) setError("phoneNumber", { type: "server", message: data.phone_number[0] });
-      if (data?.first_name?.[0]) setError("name", { type: "server", message: data.first_name[0] });
-      if (data?.last_name?.[0]) setError("surname", { type: "server", message: data.last_name[0] });
-      if (data?.password1?.[0]) {
-        setError("password1", { type: "server", message: data.password1[0] });
-        setError("password2", { type: "server", message: data.password1[0] });
+      if (serverData) {
+        // Telefon raqami band bo'lsa
+        if (serverData.phone_number) {
+          const msg = Array.isArray(serverData.phone_number) ? serverData.phone_number[0] : serverData.phone_number;
+          const errorMsg = (msg.toLowerCase().includes("already exists") || msg.toLowerCase().includes("already registered"))
+            ? "Bu telefon raqami allaqachon ro'yxatdan o'tgan"
+            : msg;
+
+          setError("phoneNumber", { type: "server", message: errorMsg });
+        }
+
+        // Boshqa maydonlar uchun xatoliklar
+        if (serverData.first_name) {
+          const msg = Array.isArray(serverData.first_name) ? serverData.first_name[0] : serverData.first_name;
+          setError("name", { type: "server", message: msg });
+        }
+        if (serverData.last_name) {
+          const msg = Array.isArray(serverData.last_name) ? serverData.last_name[0] : serverData.last_name;
+          setError("surname", { type: "server", message: msg });
+        }
+        if (serverData.password1) {
+          const msg = Array.isArray(serverData.password1) ? serverData.password1[0] : serverData.password1;
+          setError("password1", { type: "server", message: msg });
+          setError("password2", { type: "server", message: msg });
+        }
       }
-
-      // Ummiy xabar berish 
-      // if (!data) alert("Ro'yxatdan o'tishda xatolik yuz berdi. Iltimos, qayta urinib ko'ring.")
     }
+
   }
 
   return (
@@ -171,7 +187,6 @@ export default function Regis() {
             label="Telefon raqam"
             error={errors.phoneNumber?.message}
           />
-          {errors.phoneNumber && <p className="text-xs text-red-500 mt-1">{errors.phoneNumber.message}</p>}
 
           {/* 
           <div>
