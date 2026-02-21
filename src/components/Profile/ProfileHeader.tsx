@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { updateUserImageThunk, deleteUserImageThunk } from "@/features/User/User.thunks";
 import type { RootState, AppDispatch } from "@/Store";
-import { Crown, Trash2 } from "lucide-react";
+import { Crown } from "lucide-react";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Input } from "../ui/input";
@@ -24,7 +24,7 @@ export default function ProfileHeader({ isPremium }: ProfileHeaderProps) {
     const { userData } = useSelector((state: RootState) => state.profile);
     const [preview, setPreview] = React.useState<string | null>(null)
     const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
-    const longPressTimer = React.useRef<NodeJS.Timeout | null>(null);
+    const longPressTimer = React.useRef<any>(null);
 
     const handleStartPress = () => {
         // Faqat rasm bo'lsa o'chirish imkonini beramiz
@@ -87,12 +87,6 @@ export default function ProfileHeader({ isPremium }: ProfileHeaderProps) {
                         />
                     </Avatar>
 
-                    {/* Delete Icon Overlay (Optional: only visible if has photo) */}
-                    {(userData.avatar || preview) && (
-                        <div className="absolute bottom-1 right-1 bg-white p-1.5 rounded-full shadow-md border border-gray-100 text-gray-400 group-hover:text-red-500 transition-colors z-20 pointer-events-none">
-                            <Trash2 className="w-4 h-4" />
-                        </div>
-                    )}
                 </div>
             </div>
 
