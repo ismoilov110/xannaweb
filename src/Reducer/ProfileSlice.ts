@@ -147,6 +147,12 @@ export const profileSlice = createSlice({
       console.error("updateProfileThunk REJECTED:", action.error);
       state.isLoading = false;
     });
+
+    // Logout bo'lganda profil ma'lumotlarini tozalash
+    builder.addCase("auth/logout", () => {
+      console.log("ProfileSlice: Auth logout detected, resetting profile state");
+      return initialState;
+    });
   }
 });
 
