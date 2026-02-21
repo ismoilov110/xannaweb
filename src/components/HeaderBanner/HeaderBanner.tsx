@@ -83,7 +83,7 @@ const HeaderBanner: React.FC = () => {
                 }, '-=0.2');
 
         }, comp);
-
+        
         return () => ctx.revert();
     }, []);
 

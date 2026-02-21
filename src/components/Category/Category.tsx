@@ -40,7 +40,7 @@ export default function Category() {
             <div className={styles.container}>
                 <div className="text-center">
                     <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl font-medium tracking-tight mb-4 text-black">
-                        AI bilan suhbatlashing
+                        XANNA bilan suhbatlashing
                     </h3>
                     <p className="text-lg text-[#8C6F76] ">
                         Sizni qiziqtirgan mavzuni tanlang va shaxsiy AI maslahatchingiz bilan gaplashing
@@ -75,8 +75,8 @@ export default function Category() {
                                              className={`text-2xl ${p.iconColor}`} src={c.image} alt={c.name} />
                                         </div>
 
-                                        <h3 className="font-serif text-xl font-medium mb-2 text-[#1A1A1A]">{c.name}</h3>
-                                        <p className="text-[#8C6F76] text-sm mb-4">{c.description}</p>
+                                        <h3 className="font-serif text-xl font-medium mb-2 text-[#1A1A1A]">{c.title}</h3>
+                                        <p className="text-[#8C6F76] text-sm mb-4">{c.name}</p>
 
                                         <div className="flex items-center text-[#F28BA8] text-sm font-medium group-hover:gap-2 transition-all duration-300">
                                             <span>XANNA bilan Gaplashish</span>
