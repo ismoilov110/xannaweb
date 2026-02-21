@@ -4,11 +4,12 @@ import MotivationResult from "./MotivationResult";
 import MotivationHistorySidebar from "./MotivationHistorySidebar";
 
 import {
-    getActiveStrory, // agar nomini o‘zgartirmasang shu qoladi
-    geyStoryHistory,
+    getActiveStory,
+    getStoryHistory,
     uploadStoryImage,
     type StoryPrompt,
-} from "@/Services/Story/Story.services"; // yo‘lingni o‘zingnikiga mosla
+} from "@/Services/Story/Story.services";
+
 
 import { parseAIResponse, type Advice } from "@/utils/storyParser";
 
@@ -17,7 +18,6 @@ interface HistoryItem {
     timestamp: number;
     image: string; // URL
     advice: Advice;
-    // qo‘shimcha: active story info (xohlasang ishlatasan)
     time_remaining_hours?: number;
 }
 
@@ -42,8 +42,8 @@ const MotivationSection: React.FC = () => {
         setError(null);
         try {
             const [activeRes, histRes] = await Promise.all([
-                getActiveStrory(),
-                geyStoryHistory(),
+                getActiveStory(),
+                getStoryHistory(),
             ]);
 
             // history
@@ -59,12 +59,13 @@ const MotivationSection: React.FC = () => {
             } else {
                 setIsTodayDone(false);
                 setTimeRemainingHours(null);
-
-                // xohlasang tarixdan birinchisini selected qilib qo‘yish mumkin:
-                // setSelectedItem(mappedHistory[0] ?? null);
             }
         } catch (e: any) {
-            setError(e?.response?.data?.message || "Storylarni olishda xatolik bo‘ldi");
+            const msg =
+                e?.response?.data?.error?.image?.[0] ||
+                e?.response?.data?.message ||
+                "Storylarni olishda xatolik bo‘ldi";
+            setError(msg);
         } finally {
             setLoading(false);
         }
@@ -98,8 +99,8 @@ const MotivationSection: React.FC = () => {
                 setIsTodayDone(true);
                 setTimeRemainingHours(res.story.time_remaining_hours);
 
-                // sidebar refresh
-                const histRes = await geyStoryHistory();
+                // Re-fetch history to update sidebar
+                const histRes = await getStoryHistory();
                 setHistory((histRes.stories || []).map(toHistoryItem));
             } else {
                 const msg =
@@ -112,12 +113,13 @@ const MotivationSection: React.FC = () => {
             const msg =
                 e?.response?.data?.error?.image?.[0] ||
                 e?.response?.data?.message ||
-                "Uploadda xatolik yuz berdi";
+                "Xatolik yuz berdi";
             setError(msg);
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <section className="min-h-screen bg-gradient-to-br from-[#FFF5F7] via-[#FFF0F2] to-[#FDE7EB] pb-20 px-4">

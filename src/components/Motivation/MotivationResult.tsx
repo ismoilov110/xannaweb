@@ -82,7 +82,7 @@ const MotivationResult: React.FC<MotivationResultProps> = ({ imageSrc, advice, d
                         </div>
                         <div>
                             <h4 className="text-xs font-bold text-[#8B5E5E] uppercase tracking-wider mb-1">Maslahat</h4>
-                            <p className="text-sm text-[#5D4E50]">O'zingizga vaqt ajratishni unutmang.</p>
+                            <p className="text-sm text-[#5D4E50]">{advice.health || advice.activity}</p>
                         </div>
                     </div>
                 </div>

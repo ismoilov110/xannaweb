@@ -8,7 +8,7 @@ interface MotivationUploadCardProps {
     lastUploadTime?: number;
 }
 
-const MotivationUploadCard: React.FC<MotivationUploadCardProps> = ({ onUpload, disabled,}) => {
+const MotivationUploadCard: React.FC<MotivationUploadCardProps> = ({ onUpload, disabled, }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { userData } = useSelector((state: RootState) => state.profile);
 
@@ -81,7 +81,7 @@ const MotivationUploadCard: React.FC<MotivationUploadCardProps> = ({ onUpload, d
                 {/* Hidden Input */}
                 <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp"
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     className="hidden"

@@ -51,7 +51,7 @@ export default function ChatCategory() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: currentCategory.greeting, 
+      text: currentCategory.greeting,
       isUser: false,
       timestamp: new Date(),
     },
@@ -71,7 +71,7 @@ export default function ChatCategory() {
       try {
         const data = await startChat(cid);
         setConversationId(data.conversation ? data.conversation.id : null); // Backend'dan conversation ob'ekti va uning ichida id kelmoqda.
-
+        // setConversationId()
         // Agar backend old massages ni yuborsa, ularni chatgan qo'shamiz, bu odatda chatni boshlashda bitta xabardan iborat bo'ladi, u ham backend tomonidan yaratilgan va foydalanuvchiga salomlashish uchun ishlatiladi.
         if (data.messages?.length) {
           setMessages(

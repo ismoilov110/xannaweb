@@ -50,7 +50,7 @@ export async function sendMassege(categoryId: number, conversationId: number, me
     });
     return data as {
         success: boolean;
-        conversation_id: number;
+        conversation_id: number;    
         user_message: ApiChatMessage;
         assistant_message: ApiChatMessage; // ai_response emas, assistant_message
     }

@@ -76,7 +76,7 @@ export default function Category() {
                                         </div>
 
                                         <h3 className="font-serif text-xl font-medium mb-2 text-[#1A1A1A]">{c.title}</h3>
-                                        <p className="text-[#8C6F76] text-sm mb-4">{c.name}</p>
+                                        <p className="text-[#8C6F76] text-sm mb-4">{c.description}</p>
 
                                         <div className="flex items-center text-[#F28BA8] text-sm font-medium group-hover:gap-2 transition-all duration-300">
                                             <span>XANNA bilan Gaplashish</span>

@@ -14,17 +14,27 @@ export function parseAIResponse(text: string): Advice {
         if (idx === -1) return "";
         const emojis = ["💖", "🌿", "💊", "🚶"];
         const others = emojis.filter(e => e !== emoji);
-        const end = Math.min(
-            ...others.map(e => t.indexOf(e, idx + 1)).filter(i => i !== 1).concat([t.length])
-        );
-        return t.slice(idx + emoji.length, end).trim()
+        // Fix: using i !== -1 to find the next emoji
+        const endPositions = others
+            .map(e => t.indexOf(e, idx + 1))
+            .filter(i => i !== -1);
 
+        const end = endPositions.length > 0
+            ? Math.min(...endPositions)
+            : t.length;
+
+        return t.slice(idx + emoji.length, end).trim()
     }
 
+    const appearance = pick("💖");
+    const health = pick("🌿");
+    const vitamin = pick("💊");
+    const activity = pick("🚶");
+
     return {
-        appearance: pick("💖") || t.split("\n")[0] || "Bugun zo‘r kayfiyatdasiz ✨",
-        health: pick("🌿") || "Bugun ko‘proq suv iching 🌿",
-        vitamin: pick("💊") || "C va D vitaminlari foydali bo‘lishi mumkin 💊",
-        activity: pick("🚶") || "20-30 daqiqa sayr qiling 🚶",
+        appearance: appearance || t.split("\n")[0] || "O‘zingizni asrang, siz har doim go‘zalsiz ✨",
+        health: health || "Bugun ko‘proq suv iching va dam oling 🌿",
+        vitamin: vitamin || "Sizga kerakli vitaminlarni tabiatdan izlang 💊",
+        activity: activity || "Bugun kamida 30 daqiqa piyoda yurish foydali 🚶",
     };
 }

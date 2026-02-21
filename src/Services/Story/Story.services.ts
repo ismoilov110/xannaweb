@@ -14,17 +14,22 @@ export type StoryPrompt = {
 
 
 // API call to get active story
-export async function getActiveStrory() {
+export async function getActiveStory() {
     const { data } = await api.get("/api/ai/story/");
     return data as { success: boolean; has_story: boolean; story: StoryPrompt | null, message: string };
 }
 
+// Aliases for compatibility
+export const getActiveStrory = getActiveStory;
+
 // bu API call orqali biz o'zimizning barcha story tariximizni olamiz
-export async function geyStoryHistory() {
+export async function getStoryHistory() {
     const { data } = await api.get("/api/ai/story/history/")
     return data as { success: boolean; total: number; stories: StoryPrompt[] };
 }
 
+// Aliases for compatibility
+export const geyStoryHistory = getStoryHistory;
 
 export async function uploadStoryImage(file: File) {
     const formData = new FormData()
@@ -38,5 +43,6 @@ export async function uploadStoryImage(file: File) {
 
     return data as { success: boolean; story?: StoryPrompt; message?: string; error?: any; }
 }
+
 
 
