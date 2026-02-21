@@ -36,7 +36,8 @@ export default function ProfileActions({ onLogout }: ProfileActionsProps) {
         dispatch(updateProfileThunk({
             first_name: editData.first_name,
             last_name: editData.last_name,
-            birth_date: editData.birth_date
+            birth_date: editData.birth_date,
+            gender: editData.gender || ""
         }));
     };
 
@@ -97,6 +98,39 @@ export default function ProfileActions({ onLogout }: ProfileActionsProps) {
                             </div>
                         </div>
 
+                        {/* Gender Selection */}
+                        <div className="space-y-2">
+                            <Label className={cn("text-[#3A2B2F]")}>Jins</Label>
+                            <div className="flex gap-3">
+                                <Button
+                                    type="button"
+                                    variant={editData.gender === "male" ? "default" : "outline"}
+                                    onClick={() => dispatch(updateEdits({ gender: "male" }))}
+                                    className={cn(
+                                        "flex-1 h-11 rounded-xl transition-all cursor-pointer",
+                                        editData.gender === "male"
+                                            ? "bg-[#F28BA8] hover:bg-[#F28BA8]/90 text-white"
+                                            : "border-[#F3D3DA]/50 text-[#3A2B2F]"
+                                    )}
+                                >
+                                    Erkak
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant={editData.gender === "female" ? "default" : "outline"}
+                                    onClick={() => dispatch(updateEdits({ gender: "female" }))}
+                                    className={cn(
+                                        "flex-1 h-11 rounded-xl transition-all cursor-pointer",
+                                        editData.gender === "female"
+                                            ? "bg-[#F28BA8] hover:bg-[#F28BA8]/90 text-white"
+                                            : "border-[#F3D3DA]/50 text-[#3A2B2F]"
+                                    )}
+                                >
+                                    Ayol
+                                </Button>
+                            </div>
+                        </div>
+
                         {/* Phone - Read Only */}
                         <div className="space-y-2">
                             <Label className={cn("text-[#3A2B2F]")}>Telefon raqam (O'zgartirib bo'lmaydi)</Label>
@@ -129,7 +163,7 @@ export default function ProfileActions({ onLogout }: ProfileActionsProps) {
                         </div>
 
                         <div className="flex pt-2 items-center gap-3">
-                            <Button className="flex-1 h-12 hover:bg-[#F7A1B5]/80 text-black rounded-xl bg-transparent cursor-pointer " onClick={() => dispatch(closeEdit())}>
+                            <Button variant={"ghost"} className="flex-1 h-12 hover:bg-[#F7A1B5]/80 text-black rounded-xl bg-transparent cursor-pointer " onClick={() => dispatch(closeEdit())}>
                                 Bekor qilish
                             </Button>
                             <Button

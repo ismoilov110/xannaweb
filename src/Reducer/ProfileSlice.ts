@@ -7,6 +7,7 @@ interface UserProfile {
   last_name: string;
   number: string;
   birth_date: string;
+  gender: string | null;
   avatar: string;
   isPremium: boolean;
   memberSince: string;
@@ -28,6 +29,7 @@ const initialState: ProfileState = {
     last_name: "",
     number: "",
     birth_date: "",
+    gender: null,
     avatar: "", // Default avatar bo'sh bo'lishi kerak, Fallback ishlashi uchun
     isPremium: false,
     memberSince: "",
@@ -40,6 +42,7 @@ const initialState: ProfileState = {
     last_name: "",
     number: "",
     birth_date: "",
+    gender: null,
     avatar: "",
     isPremium: false,
     memberSince: "",
@@ -102,6 +105,7 @@ export const profileSlice = createSlice({
           isPremium: !!(user.has_subscription || user.is_active_subscription),
           number: user.phone_number || "",
           birth_date: user.birth_date || "Kiritilmagan",
+          gender: user.gender || null,
           memberSince: user.date_joined
             ? new Date(user.date_joined).toLocaleDateString()
             : "Noma'lum",
@@ -168,6 +172,7 @@ export const profileSlice = createSlice({
         first_name: user.first_name || state.userData.first_name,
         last_name: user.last_name || state.userData.last_name,
         birth_date: user.birth_date || state.userData.birth_date,
+        gender: user.gender || state.userData.gender,
       };
       state.isLoading = false;
       state.isEditOpen = false;
