@@ -280,7 +280,7 @@ export default function ChatCategory() {
               <button
                 onClick={handleSend}
                 disabled={!inputValue.trim()}
-                className="p-2 rounded-full transition-all disabled:opacity-40"
+                className="p-2 rounded-full cursor-pointer transition-all disabled:opacity-40"
                 style={{
                   backgroundColor: inputValue.trim()
                     ? currentCategory.color

@@ -14,9 +14,9 @@ export type ApiChatMessage = {
 
 export type ApiCategory = {
     id: number;
-    name: string;
+    title: string;
     image: string;
-    description: string;
+    name: string;
     system_prompt?: string;
 }
 
@@ -30,7 +30,7 @@ export async function getCategories() {
 
 // bu yerda biz backendga categoyId bilan so'rov yuboramiz va suhbatni boshlaymiz va chatga oid ma'lumotlarni olamiz
 export async function startChat(categoryId: number) {
-    const { data } = await api.get(`/api/ai/chat/${categoryId}/`);
+    const { data } = await api.post(`/api/ai/quick-chat/${categoryId}/`);
     return data as {
         success: boolean;
         conversation: {
@@ -44,7 +44,7 @@ export async function startChat(categoryId: number) {
 export async function sendMassege(categoryId: number, conversationId: number, message: string) {
     // Agar backend 'conversation_id' o'rniga 'id' kutyotgan bo'lsa, bu yerda tekshirish kerak.
     // Hozirgi holatda metadata 'id' deb ko'rsatmoqda.
-    const { data } = await api.post(`/api/ai/chat/${categoryId}/`, {
+    const { data } = await api.post(`/api/ai/quick-chat/${categoryId}/`, {
         message,
         conversation_id: conversationId // Agar xato davom etsa, buni 'id' ga almashtirib ko'rish mumkin
     });
