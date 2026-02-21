@@ -1,4 +1,4 @@
-import { meService, updateUserImageService, updateProfileService } from "@/Services/Users/User.services";
+import { meService, updateUserImageService, updateProfileService, deleteUserImageService } from "@/Services/Users/User.services";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const getMeThunk = createAsyncThunk("user/me", async () => {
@@ -10,6 +10,11 @@ export const updateUserImageThunk = createAsyncThunk("user/updateImage", async (
   const formData = new FormData();
   formData.append("profile_image", file);
   const res = await updateUserImageService(formData);
+  return res.data;
+});
+
+export const deleteUserImageThunk = createAsyncThunk("user/deleteImage", async () => {
+  const res = await deleteUserImageService();
   return res.data;
 });
 

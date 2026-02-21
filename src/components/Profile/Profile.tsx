@@ -71,7 +71,9 @@ export default function Profile() {
                     <ProfileInfoCard
                         icon={<Sparkles className="w-6 h-6" />}
                         label="Amal qilish muddati"
-                        value={userData.expired_at}
+                        value={userData.daysRemaining !== null
+                            ? `${userData.daysRemaining} kun qoldi`
+                            : userData.expired_at}
                     />
                 </div>
 

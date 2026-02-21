@@ -1,4 +1,4 @@
-import { getMeThunk, updateProfileThunk, updateUserImageThunk } from "@/features/User/User.thunks";
+import { getMeThunk, updateProfileThunk, updateUserImageThunk, deleteUserImageThunk } from "@/features/User/User.thunks";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface UserProfile {
@@ -11,6 +11,7 @@ interface UserProfile {
   isPremium: boolean;
   memberSince: string;
   expired_at: string;
+  daysRemaining: number | null;
 }
 
 interface ProfileState {
@@ -31,6 +32,7 @@ const initialState: ProfileState = {
     isPremium: false,
     memberSince: "",
     expired_at: "",
+    daysRemaining: null,
   },
   editData: {
     name: "",
@@ -42,6 +44,7 @@ const initialState: ProfileState = {
     isPremium: false,
     memberSince: "",
     expired_at: "",
+    daysRemaining: null,
   },
   isEditOpen: false,
   isLoading: false,
@@ -105,6 +108,7 @@ export const profileSlice = createSlice({
           expired_at: user.subscription_expired_at
             ? new Date(user.subscription_expired_at).toLocaleDateString()
             : "Amal qilish muddati yo'q",
+          daysRemaining: user.subscription_info?.days_remaining ?? null,
         };
       } catch (err) {
         console.error("ProfileSlice mapping error:", err);
@@ -133,6 +137,19 @@ export const profileSlice = createSlice({
     });
     builder.addCase(updateUserImageThunk.rejected, (state, action) => {
       console.error("updateUserImageThunk REJECTED:", action.error);
+      state.isLoading = false;
+    });
+
+    // Avatar o'chirish jarayoni
+    builder.addCase(deleteUserImageThunk.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteUserImageThunk.fulfilled, (state) => {
+      state.userData.avatar = "";
+      state.isLoading = false;
+    });
+    builder.addCase(deleteUserImageThunk.rejected, (state, action) => {
+      console.error("deleteUserImageThunk REJECTED:", action.error);
       state.isLoading = false;
     });
 
