@@ -192,7 +192,7 @@ export default function ChatCategory() {
                 <h1 className="text-lg font-semibold text-gray-800">
                   {currentCategory.titles}
                 </h1>
-                <p className="text-sm text-gray-500">AI maslahatchisi</p>
+                <p className="text-sm text-gray-500">XANNA maslahatchisi</p>
               </div>
             </div>
           </div>

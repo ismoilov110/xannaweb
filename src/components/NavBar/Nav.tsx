@@ -77,7 +77,7 @@ export default function Nav() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <ul className="md:hidden mt-3 flex flex-col gap-2 pb-4">
+          <ul className="md:hidden  mt-3 flex flex-col gap-2 pb-4">
             {NavLink.map(({ id, title, href }) => (
               <li key={id}>
                 <Link

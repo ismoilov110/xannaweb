@@ -93,7 +93,7 @@ const HeaderBanner: React.FC = () => {
             className="relative w-full min-h-screen bg-gradient-to-b from-[#FFF1F2] to-[#FDE2E8] flex flex-col items-center justify-center px-4 py-12 text-[#3F2A2A]  font-sans overflow-hidden"
         >
             {/* Badge */}
-            <div className="header-badge mb-8 z-20 inline-flex mt-20 items-center gap-2 bg-white/60 backdrop-blur-sm px-6 py-2 rounded-full border  border-white/50 shadow-sm">
+            <div className="header-badge mb-8 z-10 inline-flex mt-20 items-center gap-2 bg-white/60 backdrop-blur-sm px-6 py-2 rounded-full border  border-white/50 shadow-sm">
                 <span className="text-[#F43F5E]">✨</span>
                 <span className="text-sm font-medium text-[#3F2A2A]/80">XANNA bilan shaxsiy maslahatchi</span>
             </div>
