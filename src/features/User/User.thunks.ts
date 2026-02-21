@@ -13,9 +13,10 @@ export const updateUserImageThunk = createAsyncThunk("user/updateImage", async (
   return res.data;
 });
 
-export const updateProfileThunk = createAsyncThunk("user/updateProfile", async (payload: { full_name?: string; birth_date?: string }) => {
+export const updateProfileThunk = createAsyncThunk("user/updateProfile", async (payload: { first_name?: string; last_name?: string; birth_date?: string }) => {
   const formData = new FormData();
-  if (payload.full_name) formData.append("full_name", payload.full_name);
+  if (payload.first_name) formData.append("first_name", payload.first_name);
+  if (payload.last_name) formData.append("last_name", payload.last_name);
   if (payload.birth_date) formData.append("birth_date", payload.birth_date);
 
   const res = await updateProfileService(formData);

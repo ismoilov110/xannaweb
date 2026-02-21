@@ -3,6 +3,8 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface UserProfile {
   name: string;
+  first_name: string;
+  last_name: string;
   number: string;
   birth_date: string;
   avatar: string;
@@ -21,6 +23,8 @@ interface ProfileState {
 const initialState: ProfileState = {
   userData: {
     name: "",
+    first_name: "",
+    last_name: "",
     number: "",
     birth_date: "",
     avatar: "", // Default avatar bo'sh bo'lishi kerak, Fallback ishlashi uchun
@@ -30,6 +34,8 @@ const initialState: ProfileState = {
   },
   editData: {
     name: "",
+    first_name: "",
+    last_name: "",
     number: "",
     birth_date: "",
     avatar: "",
@@ -87,6 +93,8 @@ export const profileSlice = createSlice({
           name: user.full_name || (user.first_name || user.last_name
             ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
             : "Foydalanuvchi"),
+          first_name: user.first_name || "",
+          last_name: user.last_name || "",
           avatar: formatAvatarUrl(user.profile_image),
           isPremium: !!(user.has_subscription || user.is_active_subscription),
           number: user.phone_number || "",
@@ -137,7 +145,11 @@ export const profileSlice = createSlice({
       const user = action.payload?.user || action.payload || {};
       state.userData = {
         ...state.userData,
-        name: user.full_name || state.userData.name,
+        name: user.full_name || (user.first_name || user.last_name
+          ? `${user.first_name || ""} ${user.last_name || ""}`.trim()
+          : state.userData.name),
+        first_name: user.first_name || state.userData.first_name,
+        last_name: user.last_name || state.userData.last_name,
         birth_date: user.birth_date || state.userData.birth_date,
       };
       state.isLoading = false;
