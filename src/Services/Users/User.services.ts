@@ -16,3 +16,6 @@ export const updateProfileService = (formData: FormData) => api.patch("/me/", fo
         "Content-Type": "multipart/form-data"
     }
 });
+
+// Profile rasmiani o'chirish uchun xizmat
+export const deleteUserImageService = () => api.delete("/me/image/");
