@@ -29,12 +29,11 @@ export async function getCategories() {
 
 
 // bu yerda biz backendga categoyId bilan so'rov yuboramiz va suhbatni boshlaymiz va chatga oid ma'lumotlarni olamiz
-export async function startChat(categoryId: number) {
+export async function startChat(_categoryId: number) {
     try {
         // FormData ishlatish orqali application/json cheklovidan o'tamiz
-        const formData = new FormData();
-        // const { data } = await api.post(`/api/ai/quick-chat/${categoryId}/`, formData, {
-            // headers: {
+        // const { data } = await api.post(`/api/ai/quick-chat/${_categoryId}/`, formData, {
+        // headers: {
         //         "Content-Type": "multipart/form-data"
         //     }
         // });

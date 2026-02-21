@@ -72,11 +72,11 @@ export default function Category() {
                                     <div className="relative z-10">
                                         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#FFFFFF] shadow-md mb-4 transition-transform duration-300">
                                             <img
-                                             className={`text-2xl ${p.iconColor}`} src={c.image} alt={c.name} />
+                                                className={`text-2xl ${p.iconColor}`} src={c.image} alt={c.name} />
                                         </div>
 
                                         <h3 className="font-serif text-xl font-medium mb-2 text-[#1A1A1A]">{c.title}</h3>
-                                        <p className="text-[#8C6F76] text-sm mb-4">{c.description}</p>
+
 
                                         <div className="flex items-center text-[#F28BA8] text-sm font-medium group-hover:gap-2 transition-all duration-300">
                                             <span>XANNA bilan Gaplashish</span>

@@ -76,21 +76,9 @@ export default function ChatCategory() {
 
     (async () => {
       try {
-        const data = await startChat(cid);
-        const newCid = data.conversation?.id || data.conversation_id || null;
-        setConversationId(newCid);
-
-        if (data.messages?.length) {
-          setMessages(
-            data.messages.map((m, index) => ({
-              id: Date.now() + index,
-              text: m.content,
-              isUser: m.role === "user",
-              timestamp: new Date(m.created_at || m.timestamp || "")
-            })))
-        }
+        await startChat(cid);
       } catch (e: any) {
-        console.error("startChat init error:", e);
+        // Shovqinsiz xatolikni o'tkazib yuboramiz, chunki sendMessage o'zi suhbatni yarata oladi
       }
     })()
   }, [cid, navigate])
@@ -139,7 +127,6 @@ export default function ChatCategory() {
         return
       }
 
-      console.error(e);
       setMessages((prev) => [...prev, {
         id: Date.now() + 1,
         text: "Kechirasiz, xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.",

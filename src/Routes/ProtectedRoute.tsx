@@ -1,6 +1,4 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/Store";
 
 export default function ProtectedRoute() {
   const token = localStorage.getItem("access_token");
