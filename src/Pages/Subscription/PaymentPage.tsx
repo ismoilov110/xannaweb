@@ -19,7 +19,7 @@ export default function PaymentPage() {
   const location = useLocation();
   const state = location.state as { tariffId?: number } | undefined;
   const tariffId = state?.tariffId ?? FALLBACK_TARIFF_ID;
-
+  const CLICK_ENABLED = false; // ❌ hozir o‘chiq
   const [loading, setLoading] = useState(true);
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
   const [price, setPrice] = useState<string>("47 000 so'm");
@@ -127,25 +127,30 @@ export default function PaymentPage() {
 
         <div className="space-y-4">
           {/* Click */}
-          <button
-            disabled={loading || !click?.url}
-            onClick={() => openPayment(click?.url)}
-            className="w-full group relative flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] hover:border-[#23A8F0] hover:bg-[#F0F9FF] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            <div className="flex cursor-pointer items-center gap-4">
-              <ClickLogo />
-              <div className="text-left">
-                <h3 className="font-bold text-[#2E2E2E]">Click</h3>
-                <p className="text-xs text-[#9A7F85]">Click Evolution orqali</p>
+          {!CLICK_ENABLED && (
+            <button
+              disabled
+              onClick={(e) => e.preventDefault()}
+              className="w-full relative flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] bg-gray-50 opacity-60 grayscale cursor-not-allowed"
+            >
+              {/* TEZ KUNDA badge */}
+              <div className="absolute -top-2 -right-2 bg-[#F1F5F9] text-[#94A3B8] text-[10px] px-2 py-0.5 rounded-full border border-[#E2E8F0] font-bold z-10">
+                TEZ KUNDA
               </div>
-            </div>
-            <div className="w-6 h-6 rounded-full border-2 border-[#E2E8F0] group-hover:border-[#23A8F0] group-hover:bg-[#23A8F0] flex items-center justify-center">
-              <Check
-                size={14}
-                className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
-              />
-            </div>
-          </button>
+
+              <div className="flex items-center gap-4">
+                <ClickLogo />
+                <div className="text-left">
+                  <h3 className="font-bold text-[#94A3B8]">Click</h3>
+                  <p className="text-xs text-[#CBD5E1]">
+                    Texnik ishlar olib borilmoqda
+                  </p>
+                </div>
+              </div>
+
+              <div className="w-6 h-6 rounded-full border-2 border-[#E2E8F0]" />
+            </button>
+          )}
 
           {/* Payme */}
           <button
