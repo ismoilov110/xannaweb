@@ -1,4 +1,4 @@
-import { LogOut, Edit3, Calendar, Trash2 } from "lucide-react";
+import {  Edit3, Calendar, Trash2 } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -24,11 +24,9 @@ import {  useNavigate } from "react-router-dom";
 import { deleteAccoutThunk } from "@/features/ProfileDelete/DeleteProfile.thunks";
 import { useEffect } from "react";
 
-interface ProfileActionsProps {
-    onLogout: () => void;
-}
 
-export default function ProfileActions({ onLogout }: ProfileActionsProps) {
+
+export default function ProfileActions() {
     const dispatch = useDispatch<AppDispatch>();
 
     const { editData, isEditOpen, isLoading } = useSelector(

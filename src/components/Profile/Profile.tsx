@@ -84,7 +84,7 @@ export default function Profile() {
                 </div>
 
                 <ProfileActions
-                    onLogout={handleLogout}
+                   
                 />
 
 
