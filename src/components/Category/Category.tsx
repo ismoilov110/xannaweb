@@ -1,6 +1,6 @@
 import { styles } from "@/Styles/Styles";
 import { ArrowRight } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { getCategories, type ApiCategory } from "@/Services/AiChat/AiChat.services";
 
@@ -61,10 +61,10 @@ export default function Category() {
                             const p = palette[index % palette.length];
 
                             return (
-                                <Link
+                                <div
                                     key={c.id}
-                                    to={`/chat/${c.id}`}
-                                    className="group relative rounded-2xl border p-6 border-white/20 bg-white backdrop-blur-xl shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl overflow-hidden"
+                                    onClick={() => navigate(`/chat/${c.slug || c.id}`, { state: { category: c } })}
+                                    className="group relative cursor-pointer rounded-2xl border p-6 border-white/20 bg-white backdrop-blur-xl shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-2xl overflow-hidden"
                                     style={{ animationDelay: `${index * 0.1}s` }}
                                 >
                                     <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${p.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
@@ -77,13 +77,14 @@ export default function Category() {
 
                                         <h3 className="font-serif text-xl font-medium mb-2 text-[#1A1A1A]">{c.title}</h3>
 
+                                        <p className="p-1 text-sm text-gray-500">{c.description}</p>
 
                                         <div className="flex items-center text-[#F28BA8] text-sm font-medium group-hover:gap-2 transition-all duration-300">
                                             <span>XANNA bilan Gaplashish</span>
                                             <ArrowRight className="h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                                         </div>
                                     </div>
-                                </Link>
+                                </div>
                             );
                         })}
                 </div>

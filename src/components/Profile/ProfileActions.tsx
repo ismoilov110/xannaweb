@@ -1,4 +1,4 @@
-import { LogOut, Edit3, Calendar } from "lucide-react";
+import { LogOut, Edit3, Calendar, Trash2 } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -20,6 +20,9 @@ import {
 import { updateProfileThunk } from "@/features/User/User.thunks";
 import type { AppDispatch } from "@/Store";
 import { cn } from "@/lib/utils";
+import {  useNavigate } from "react-router-dom";
+import { deleteAccoutThunk } from "@/features/ProfileDelete/DeleteProfile.thunks";
+import { useEffect } from "react";
 
 interface ProfileActionsProps {
     onLogout: () => void;
@@ -31,6 +34,29 @@ export default function ProfileActions({ onLogout }: ProfileActionsProps) {
     const { editData, isEditOpen, isLoading } = useSelector(
         (state: RootState) => state.profile
     );
+
+    const navigate = useNavigate();
+    const token = localStorage.getItem("access_token");
+
+    useEffect(() => {
+        if (!token) navigate("/register", { replace: true })
+
+    }, [token, navigate])
+    const handleDeleteAccount = async () => {
+        const res = await dispatch(deleteAccoutThunk());
+
+        if (deleteAccoutThunk.fulfilled.match(res)) {
+            // tokenlarni tozalaymiz
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+
+            // user qayta foydalanmoqchi bo‘lsa register qiladi
+            navigate("/register", { replace: true });
+        } else {
+            // xohlasang toast qo‘yamiz
+            console.log("Delete error:", res.payload);
+        }
+    };
 
     const handleSave = () => {
         dispatch(updateProfileThunk({
@@ -180,15 +206,53 @@ export default function ProfileActions({ onLogout }: ProfileActionsProps) {
             </Dialog>
 
             {/* Logout */}
-            <div className="mt-12 pt-6 border-t border-[#F3D3DA]/30 animate-slide-up" style={{ animationDelay: "0.2" }}>
-                <Button
-                    variant="ghost"
-                    onClick={onLogout}
-                    className="w-full cursor-pointer rounded-xl text-[#8C6F76] hover:text-destructive hover:bg-destructive/10 transition-colors"
-                >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    <span>Chiqish</span>
-                </Button>
+            <div className="mt-8 flex flex-col items-center gap-6">
+
+                {/* ... edit dialogingiz shu holatda qoladi ... */}
+
+                {/* Delete Account */}
+                <div className="mt-12 pt-6 border-t border-[#F3D3DA]/30">
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="ghost"
+                                className="w-full cursor-pointer rounded-xl text-destructive hover:bg-destructive/10 transition-colors"
+                                disabled={isLoading}
+                            >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                <span>Akkountni o‘chirish</span>
+                            </Button>
+                        </DialogTrigger>
+
+                        <DialogContent className="sm:max-w-md rounded-3xl">
+                            <DialogHeader>
+                                <DialogTitle>Akkountni o‘chirish</DialogTitle>
+                                <DialogDescription>
+                                    Akkountingiz butunlay o‘chadi. Qayta tiklab bo‘lmaydi.
+                                    Davom etasizmi?
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            <div className="flex gap-3 pt-2">
+                                <Button
+                                    variant="outline"
+                                    className="flex-1 h-11 rounded-xl"
+                                    onClick={() => { }}
+                                >
+                                    Bekor qilish
+                                </Button>
+
+                                <Button
+                                    className="flex-1 h-11 rounded-xl bg-destructive hover:bg-destructive/90"
+                                    onClick={handleDeleteAccount}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? "O‘chirilmoqda..." : "Ha, o‘chirish"}
+                                </Button>
+                            </div>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
         </div>
     );

@@ -17,12 +17,20 @@ export type ApiCategory = {
     title: string;
     image: string;
     name: string;
+    slug?: string;
+    icon?: string;
+    description: string
     system_prompt?: string;
 }
 
 export async function getCategories() {
     const { data } = await api.get("/api/ai/categories/");
-    return data.categories as ApiCategory[]; // bu yerda biz backenddan keladigan ma'lumotlarni TypeScript tipiga moslashtiramiz
+    return data.categories as ApiCategory[];
+}
+
+export async function getCategoryDetail(slugOrId: string | number) {
+    const { data } = await api.get(`/api/ai/categories/${slugOrId}/`);
+    return data as ApiCategory;
 }
 
 

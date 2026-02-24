@@ -1,74 +1,74 @@
 import { styles } from "@/Styles/Styles";
-import { type CategoriesType, type Message } from "@/Types/Types";
-import { ArrowLeft, BookOpen, ChefHat, Heart, Lightbulb, MapPin, Send } from "lucide-react";
+import { type Message } from "@/Types/Types";
+import { ArrowLeft, BookOpen, ChefHat, Heart, Lightbulb, MapPin, Send, Sparkles, Stethoscope, Dumbbell, Brain, Circle } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { startChat, sendMessage } from "@/Services/AiChat/AiChat.services";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { startChat, sendMessage, getCategoryDetail, type ApiCategory } from "@/Services/AiChat/AiChat.services";
+
+const iconMap: Record<string, any> = {
+  Sparkles,
+  ChefHat,
+  Stethoscope,
+  Dumbbell,
+  Brain,
+  BookOpen,
+  Heart,
+  Lightbulb,
+  MapPin,
+  Circle
+};
 
 export default function ChatCategory() {
-  const { categoryId } = useParams<{ categoryId: string }>();
-  const cid = Number(categoryId)
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [conversationId, setConversationId] = useState<number | null>(null)
 
-  const Chatcategories: CategoriesType = {
-    cooking: {
-      titles: "Qanday ovqat qilish",
-      icon: ChefHat,
-      color: "#FF6B35",
-      greeting: "Salom! Men sizga mazali retseptlar va ovqat tayyorlash bo'yicha maslahat beraman. Qanday taom tayyorlashni xohlaysiz?",
-    },
-    places: {
-      titles: "Kechgi sayrga qayerga borish",
-      icon: MapPin,
-      color: "#4A90E2",
-      greeting: "Salom! Kechgi sayr uchun eng yaxshi joylarni topishda yordam beraman. Qaysi shahardasan va qanday muhit yoqadi?",
-    },
-    lifehacks: {
-      titles: "Foydali lifehack",
-      icon: Lightbulb,
-      color: "#F59E0B",
-      greeting: "Salom! Kundalik hayotni osonlashtiruvchi maslahatlar beraman. Qaysi sohada yordam kerak?",
-    },
-    books: {
-      titles: "Qanday kitob o'qish",
-      icon: BookOpen,
-      color: "#10B981",
-      greeting: "Salom! Sizga eng zo'r kitoblarni tavsiya qilaman. Qanday janr yoqadi yoki qaysi mavzuda kitob qidiryapsiz?",
-    },
-    selfcare: {
-      titles: "O'ziga qarash bo'yicha maslahat",
-      icon: Heart,
-      color: "#EC4899",
-      greeting: "Salom! Go'zallik va salomatlik sirlari haqida gaplashaylik. Bugun sizga qanday yordam bera olaman?",
-    },
-  };
+  const [category, setCategory] = useState<ApiCategory | null>(location.state?.category || null);
+  const [conversationId, setConversationId] = useState<number | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true); // Added setLoading state
 
-  const categoryMapping: Record<string, string> = {
-    "0": "cooking",
-    "1": "places",
-    "2": "lifehacks",
-    "3": "books",
-    "4": "selfcare"
-  };
+  useEffect(() => {
+    if (!category && slug) {
+      (async () => {
+        try {
+          const data = await getCategoryDetail(slug);
+          setCategory(data);
+        } catch (e) {
+          console.error("Error fetching category:", e);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    } else if (category) {
+      setLoading(false);
+    }
+  }, [slug, category]);
 
-  const currentCategoryKey = categoryMapping[categoryId || "0"] || "cooking";
-  const currentCategory = Chatcategories[currentCategoryKey];
+  useEffect(() => {
+    if (category && messages.length === 0) {
+      setMessages([
+        {
+          id: 1,
+          text: category.description || "Salom! Men sizga yordam berishga tayyorman.",
+          isUser: false,
+          timestamp: new Date(),
+        },
+      ]);
+    }
+  }, [category, messages.length]);
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: currentCategory.greeting,
-      isUser: false,
-      timestamp: new Date(),
-    },
-  ]);
+  const categoryTitle = category?.title || "Kategoriya";
+  const categoryIconName = category?.icon || "";
+  const IconComponent = iconMap[categoryIconName] || BookOpen || Circle;
+
+  const cid = category?.id;
 
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
-  const IconComponent = currentCategory.icon;
+  // const IconComponent = currentCategory.icon;
 
   // Auto scroll to bottom
   useEffect(() => {
@@ -100,6 +100,7 @@ export default function ChatCategory() {
     setIsTyping(true);
 
     try {
+      if (!cid) return;
       const res = await sendMessage(cid, conversationId, text);
 
       if (!conversationId && res.conversation_id) {
@@ -145,6 +146,14 @@ export default function ChatCategory() {
     });
   };
 
+  if (!category && loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-pink-50 h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      </div>
+    );
+  }
+
   return (
     <section className="min-h-screen bg-linear-to-b from-pink-50 to-white flex flex-col">
       {/* Fixed Header */}
@@ -162,19 +171,20 @@ export default function ChatCategory() {
             {/* Category Icon & Title */}
             <div className="flex items-center gap-3">
               <div
-                className="p-3 rounded-full"
-                style={{ backgroundColor: `${currentCategory.color}20` }}
+                className="p-3 rounded-full bg-pink-100"
               >
                 <IconComponent
                   size={24}
-                  style={{ color: currentCategory.color }}
+                  className="text-pink-500"
                 />
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-gray-800">
-                  {currentCategory.titles}
+                  {categoryTitle}
                 </h1>
-                <p className="text-sm text-gray-500">XANNA maslahatchisi</p>
+                <p className="text-sm text-gray-500">
+                  {category?.description || "XANNA maslahatchisi"}
+                </p>
               </div>
             </div>
           </div>
@@ -198,12 +208,11 @@ export default function ChatCategory() {
                 >
                   {!message.isUser && (
                     <div
-                      className="w-8 h-8 rounded-full mb-2 flex items-center justify-center"
-                      style={{ backgroundColor: `${currentCategory.color}20` }}
+                      className="w-8 h-8 rounded-full mb-2 flex items-center justify-center bg-pink-50"
                     >
                       <IconComponent
                         size={16}
-                        style={{ color: currentCategory.color }}
+                        className="text-pink-500"
                       />
                     </div>
                   )}
@@ -264,7 +273,7 @@ export default function ChatCategory() {
                 className="p-2 rounded-full cursor-pointer transition-all disabled:opacity-40"
                 style={{
                   backgroundColor: inputValue.trim()
-                    ? currentCategory.color
+                    ? "#F28BA8"
                     : "#E5E7EB",
                 }}
               >
