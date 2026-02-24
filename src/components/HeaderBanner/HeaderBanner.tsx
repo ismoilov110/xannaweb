@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from "gsap";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '@/Store';
 import { getDailyMotivationThunk } from '@/Reducer/MotivationSlice';
+import { Instagram, Send } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const HeaderBanner: React.FC = () => {
     const comp = useRef<HTMLDivElement>(null);
@@ -83,7 +85,7 @@ const HeaderBanner: React.FC = () => {
                 }, '-=0.2');
 
         }, comp);
-        
+
         return () => ctx.revert();
     }, []);
 
@@ -128,17 +130,21 @@ const HeaderBanner: React.FC = () => {
             </div>
 
             {/* Stats */}
-            {/* <div className="header-stats flex items-center gap-8 md:gap-12 opacity-80">
-                <div className="text-center">
-                    <span className="block text-xl md:text-2xl font-semibold mb-1">5,000+</span>
-                    <span className="text-sm text-[#3F2A2A]/70">foydalanuvchi</span>
+            <div className="header-stats flex items-center gap-8 md:gap-12 opacity-80">
+                <div className="text-center flex space-x-2">
+                    <Link className="flex items-center justify-center w-12 h-12 rounded-full bg-[#FFFFFF] shodow-md border border-border/50 text-[#8C6F76] hover:text-[#F28BA8] hover:shadow-md hover:-translate-y-1 transition-all durtion-300" to={"https://www.instagram.com/lookmebyxanna?igsh=amVocHY4YmVzYmdx"}>
+                        <Instagram className={cn("h-5 w-5")} />
+                    </Link>
+                    <div className="w-px h-8 bg-[#3F2A2A]/10"></div>
+                    <Link className="flex items-center justify-center w-12 h-12 rounded-full bg-[#FFFFFF] shodow-md border border-border/50 text-[#8C6F76] hover:text-[#F28BA8] hover:shadow-md hover:-translate-y-1 transition-all durtion-300" to={"https://t.me/lookmebyxanna"}>
+                        <Send className={cn("h-5 w-5")} />
+                    </Link>
                 </div>
-                <div className="w-px h-8 bg-[#3F2A2A]/10"></div>
-                <div className="text-center">
-                    <span className="block text-xl md:text-2xl font-semibold mb-1">4.9</span>
-                    <span className="text-sm text-[#3F2A2A]/70">reyting</span>
-                </div>
-            </div> */}
+
+            </div>
+            <div className='mt-4 text-center'>
+                <p className='text-sm md:text-md  font-serif text-[#3F2A2A]'>obuna bo'lish majburiy</p>
+            </div>
         </div>
     );
 };
