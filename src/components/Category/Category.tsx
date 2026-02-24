@@ -70,7 +70,7 @@ export default function Category() {
                                     <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${p.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
 
                                     <div className="relative z-10">
-                                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#FFFFFF] shadow-md mb-4 transition-transform duration-300">
+                                        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#FFFFFF] shadow-md mb-4 transition-transform duration-300 overflow-hidden">
                                             <img
                                                 className={`text-2xl ${p.iconColor}`} src={c.image} alt={c.name} />
                                         </div>

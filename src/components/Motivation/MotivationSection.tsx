@@ -130,7 +130,7 @@ const MotivationSection: React.FC = () => {
                         ✨ Kunlik Motivatsiya
                     </h2>
                     <p className="text-[#9A7F85] max-w-md mx-auto">
-                        Har kuni bir dona rasm yuklang va AI tomonidan taqdim etilgan maxsus maslahatlarni qabul qiling.
+                        Har kuni bir dona rasm yuklang va XANNA tomonidan taqdim etilgan maxsus maslahatlarni qabul qiling.
                     </p>
                 </header>
 
@@ -173,7 +173,7 @@ const MotivationSection: React.FC = () => {
                                             <span className="text-pink-400">✅</span>
                                             <p className="text-[#8B5E5E] text-sm font-medium">
                                                 Bugungi limit tugadi
-                                                {timeRemainingHours != null ? `, ${timeRemainingHours.toFixed(1)} soat qoldi` : ""} 🌸
+                                                {timeRemainingHours != null ? `, ${timeRemainingHours.toFixed(0)} soat qoldi` : ""} 🌸
                                             </p>
                                         </div>
                                     </div>

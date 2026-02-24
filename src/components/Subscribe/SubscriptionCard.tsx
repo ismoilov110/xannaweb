@@ -94,6 +94,7 @@ export default function SubscriptionCard() {
                         </div>
                     </div>
                 </div>
+            <p className="font-sans text-center text-[#8C6F76] mt-4">Avtomobile va uy sotib olish imkoniyati</p>
             </div>
         </div>
     );

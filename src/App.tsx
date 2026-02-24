@@ -92,7 +92,7 @@ export default function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/obuna" element={<Subscribe />} />
           <Route path="/kontentlar" element={<Contack />} />
-          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog" element={<Blog />} /> 
           <Route path="/chat" element={<Chat />} />
           <Route path="/chat/:categoryId" element={<ChatCategory />} />
           <Route path="/profilepage" element={<ProfilePage />} />

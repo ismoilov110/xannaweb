@@ -45,7 +45,7 @@ const HeaderBanner: React.FC = () => {
                 setCurrentIndex((prev: number) => (prev + 1) % displayMessages.length);
                 setIsAnimating(false)
             }, 500)
-        }, 4000)
+        }, 360000)
 
         return () => clearInterval(interval)
     }, [displayMessages.length])
@@ -128,7 +128,7 @@ const HeaderBanner: React.FC = () => {
             </div>
 
             {/* Stats */}
-            <div className="header-stats flex items-center gap-8 md:gap-12 opacity-80">
+            {/* <div className="header-stats flex items-center gap-8 md:gap-12 opacity-80">
                 <div className="text-center">
                     <span className="block text-xl md:text-2xl font-semibold mb-1">5,000+</span>
                     <span className="text-sm text-[#3F2A2A]/70">foydalanuvchi</span>
@@ -138,7 +138,7 @@ const HeaderBanner: React.FC = () => {
                     <span className="block text-xl md:text-2xl font-semibold mb-1">4.9</span>
                     <span className="text-sm text-[#3F2A2A]/70">reyting</span>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };
