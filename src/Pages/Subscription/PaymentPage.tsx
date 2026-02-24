@@ -71,7 +71,7 @@ export default function PaymentPage() {
   }, [methods]);
 
   const payme = normalized.find((m) => m.id.includes("payme"));
-  const click = normalized.find((m) => m.id.includes("click"));
+  // const click = normalized.find((m) => m.id.includes("click"));
 
   const openPayment = (url?: string) => {
     if (!url) {
