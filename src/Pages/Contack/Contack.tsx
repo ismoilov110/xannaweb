@@ -14,6 +14,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/Services/Api";
 
 // TypeScript Type
 type ContentItem = {
@@ -38,13 +39,36 @@ const Contack: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get("https://xannaofficial.uz/kontent/");
+      const token = localStorage.getItem("access_token") ||
+        localStorage.getItem("access") ||
+        localStorage.getItem("token");
+
+      if (!token) {
+        setError("Kontentlarni ko'rish uchun avvaliga tizimga kirin (token topilmadi).")
+        setContents([])
+        return;
+      }
+
+
+      const response = await api.get("https://xannaofficial.uz/kontent/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+
       setContents(response.data);
     } catch (err: any) {
-      console.error("Fetch contents error:", err);
-      setError("Xatolik yuz berdi, qayta urinib ko'ring");
+      console.log("Fecht contents error:", err);
+
+      // Agar 401 bolsa aniq xabarni korsatish uchun
+      if (err?.response?.status === "401") {
+        setError("Sessiya tugagan yoki token no'tog'ri, Iltimos qayta login qiling.");
+      } else {
+        setError("Xatolik yuz berdi qayta orinib korin");
+      }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }, []);
 
