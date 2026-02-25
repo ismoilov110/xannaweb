@@ -16,7 +16,7 @@ const HeaderBanner: React.FC = () => {
 
     // Redux store'dan motivation gaplarini olamiz
     const { messages, status } = useSelector((state: RootState) => state.motivation);
-    const { isAuth } = useSelector((state: RootState) => state.auth);
+
 
     // Agar backenddan gaplar kelmagan bo'lsa, default gaplar
     const defaultMessages = [
@@ -28,29 +28,53 @@ const HeaderBanner: React.FC = () => {
         "Bugun yangi narsalar o'rgan 📚",
     ];
 
+    const STORAGE_KEY = "daily_motivation_time";
+
+
     const displayMessages = messages.length > 0 ? messages : defaultMessages;
 
-    // Kunlik motivation gaplarni yuklash
+    // API dan ma'lumotlarni olish
     useEffect(() => {
-        if (isAuth && status === 'idle') {
-            dispatch(getDailyMotivationThunk());
-        }
-    }, [dispatch, status, isAuth]);
+        // Agar allaqachon yuklangan bo'lsa (hatto bo'sh bo'lsa ham) yoki yuklanayotgan bo'lsa, qayta so'rov yubormaymiz
+        if (status !== "idle") return;
 
-    // bu massega almashib turishi uchun kod yozildi 
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+            console.log("DAILY MOTIVATION: Token topilmadi");
+            return;
+        }
+
+        console.log("DAILY MOTIVATION: Fetching...");
+        dispatch(getDailyMotivationThunk())
+            .unwrap()
+            .then((data) => {
+                console.log("DAILY MOTIVATION SUCCESS (Normalized):", data);
+                localStorage.setItem(STORAGE_KEY, String(Date.now()));
+            })
+            .catch((e) => {
+                console.error("DAILY MOTIVATION ERROR:", e);
+            });
+    }, [dispatch, status]);
+
+    // messages uzunligi o‘zgarsa index 0 ga qaytsin
     useEffect(() => {
-        if (displayMessages.length === 0) return;
+        setCurrentIndex(0);
+    }, [displayMessages.length]);
+
+    // Aylanib turishi
+    useEffect(() => {
+        if (displayMessages.length <= 1) return;
 
         const interval = setInterval(() => {
             setIsAnimating(true);
             setTimeout(() => {
-                setCurrentIndex((prev: number) => (prev + 1) % displayMessages.length);
-                setIsAnimating(false)
-            }, 500)
-        }, 360000)
+                setCurrentIndex((prev) => (prev + 1) % displayMessages.length);
+                setIsAnimating(false);
+            }, 500);
+        }, 8000);
 
-        return () => clearInterval(interval)
-    }, [displayMessages.length])
+        return () => clearInterval(interval);
+    }, [displayMessages.length]);
 
 
     useEffect(() => {

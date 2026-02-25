@@ -17,8 +17,30 @@ export const getDailyMotivationThunk = createAsyncThunk(
     "motivation/getDaily",
     async () => {
         const data = await getDailyMotivationService();
-        // Backenddan kelgan MotivationMessage[] ni string[] ga o'tkazamiz
-        return data.map((item: any) => item.text || item.message || item.content);
+
+        // 🔒 Himoyalangan normalize
+        if (Array.isArray(data)) {
+            return data.map(
+                (item: any) => typeof item === 'string' ? item : (item.text || item.message || item.content || "")
+            );
+        }
+
+        // Agar object bo‘lsa
+        if (typeof data === "object" && data !== null) {
+            const possibleArray = (data as any).motivations || (data as any).data || (data as any).results || (data as any).motivation_words;
+            if (Array.isArray(possibleArray)) {
+                return possibleArray.map(
+                    (item: any) => typeof item === 'string' ? item : (item.text || item.message || item.content || "")
+                );
+            }
+
+            if ((data as any).text) return [(data as any).text];
+            if ((data as any).message) return [(data as any).message];
+            if ((data as any).content) return [(data as any).content];
+        }
+
+        // Fallback
+        return [];
     }
 );
 

@@ -1,12 +1,7 @@
 import { api } from "../Api";
 
-export interface MotivationMessage {
-    id: number;
-    text: string;
-    author?: string;
-}
-
 export const getDailyMotivationService = async () => {
-    const { data } = await api.get("/api/ai/daily-motivation/");
-    return data as MotivationMessage[];
+  const { data } = await api.get("/api/ai/daily-motivation/");
+  console.log("DAILY MOTIVATION OK:", data);
+  return data; // raw
 };
