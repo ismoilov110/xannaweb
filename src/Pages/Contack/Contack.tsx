@@ -49,7 +49,7 @@ const Contack: React.FC = () => {
       }
 
 
-      const response = await api.get("https://xannaofficial.uz/kontent/", {
+      const response = await api.get("/kontent/", {
         headers: {
           Authorization: `Bearer ${token}`,
         },

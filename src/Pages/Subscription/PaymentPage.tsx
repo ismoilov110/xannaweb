@@ -127,26 +127,26 @@ export default function PaymentPage() {
 
         <div className="space-y-4">
           {/* Click */}
-      <button
-  disabled={loading || !click?.url}
-  onClick={() => openPayment(click?.url)}
-  className="w-full group relative flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] hover:border-[#23A8F0] hover:bg-[#F0F9FF] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
->
-  <div className="flex items-center gap-4">
-    <ClickLogo />
-    <div className="text-left">
-      <h3 className="font-bold text-[#2E2E2E]">Click</h3>
-      <p className="text-xs text-[#9A7F85]">Click Evolution orqali</p>
-    </div>
-  </div>
+          <button
+            disabled={loading || !click?.url}
+            onClick={() => openPayment(click?.url)}
+            className="w-full group relative flex items-center justify-between p-4 rounded-2xl border border-[#E2E8F0] hover:border-[#23A8F0] hover:bg-[#F0F9FF] transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <div className="flex items-center gap-4">
+              <ClickLogo />
+              <div className="text-left">
+                <h3 className="font-bold text-[#2E2E2E]">Click</h3>
+                <p className="text-xs text-[#9A7F85]">Click Evolution orqali</p>
+              </div>
+            </div>
 
-  <div className="w-6 h-6 rounded-full border-2 border-[#E2E8F0] group-hover:border-[#23A8F0] group-hover:bg-[#23A8F0] flex items-center justify-center">
-    <Check
-      size={14}
-      className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
-    />
-  </div>
-</button>
+            <div className="w-6 h-6 rounded-full border-2 border-[#E2E8F0] group-hover:border-[#23A8F0] group-hover:bg-[#23A8F0] flex items-center justify-center">
+              <Check
+                size={14}
+                className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              />
+            </div>
+          </button>
 
           {/* Payme */}
           <button
