@@ -148,7 +148,7 @@ const HeaderBanner: React.FC = () => {
                 <button onClick={() => navigate("/motivation")} className="header-btn cursor-pointer w-full sm:w-auto px-8 py-4 bg-[#F43F5E] text-white rounded-full font-medium hover:bg-[#e11d48] transition-colors shadow-lg shadow-[#F43F5E]/25 text-lg min-w-[160px]">
                     Kunlik motivatsiya
                 </button>
-                <button className="header-btn cursor-pointer w-full sm:w-auto px-8 py-4 bg-white text-[#3F2A2A] rounded-full font-medium hover:bg-gray-50 transition-colors shadow-sm text-lg border border-transparent hover:border-gray-200 min-w-[160px]">
+                <button onClick={() => navigate("/kontentlar")} className="header-btn cursor-pointer w-full sm:w-auto px-8 py-4 bg-white text-[#3F2A2A] rounded-full font-medium hover:bg-gray-50 transition-colors shadow-sm text-lg border border-transparent hover:border-gray-200 min-w-[160px]">
                     Kontentlarni ko'rish
                 </button>
             </div>
